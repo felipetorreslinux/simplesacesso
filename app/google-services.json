@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "651525038593",
+    "firebase_url": "https://simples-acesso.firebaseio.com",
+    "project_id": "simples-acesso",
+    "storage_bucket": "simples-acesso.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651525038593:android:678c218f0704d303",
+        "android_client_info": {
+          "package_name": "com.simples.acesso"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651525038593-v8h2pr8n4obu7hc09cv0tcliit7n38fp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.simples.acesso",
+            "certificate_hash": "2133c8a67f2f4e27ee529c16eb40279ce94ed7e2"
+          }
+        },
+        {
+          "client_id": "651525038593-9geittf28f13p43vcu8d6rdacranli6g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA9-55M4dIjQwMat4gxmBAGp0Zb7Ygapk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651525038593-9geittf28f13p43vcu8d6rdacranli6g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

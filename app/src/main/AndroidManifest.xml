@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.simples.acesso">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_icon"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:name=".FireBase.FireCore">
+
+        <activity
+            android:name=".Splash"
+            android:theme="@style/Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".Views.Login"
+            android:screenOrientation="portrait"
+            android:theme="@style/Login" />
+
+        <activity android:name=".Views.Slides_Intro"
+            android:screenOrientation="portrait"
+            android:theme="@style/Slides"/>
+
+        <activity android:name=".Views.NewAccount"
+            android:screenOrientation="portrait"
+            android:theme="@style/NewAccount"/>
+
+        <activity android:name=".Views.VerificationSMS"
+            android:screenOrientation="portrait"
+            android:theme="@style/VerificationSMS"/>
+
+    </application>
+
+</manifest>
