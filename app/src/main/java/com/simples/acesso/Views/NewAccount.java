@@ -3,11 +3,13 @@ package com.simples.acesso.Views;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -21,7 +23,7 @@ import com.simples.acesso.Utils.PreLoads;
 
 public class NewAccount extends AppCompatActivity implements View.OnClickListener {
 
-    Toolbar toolbar_newaccount;
+    Toolbar toolbar;
 
     TextInputLayout layout_cellphone_newaccount;
     TextInputLayout layout_password_newaccount;
@@ -46,16 +48,7 @@ public class NewAccount extends AppCompatActivity implements View.OnClickListene
 
         serviceNewAccount = new Service_NewAccount(this);
 
-        toolbar_newaccount = (Toolbar) findViewById(R.id.toolbar_newaccount);
-        toolbar_newaccount.setNavigationIcon(R.drawable.ic_back_white);
-        toolbar_newaccount.setTitle(R.string.title_newaccount);
-        toolbar_newaccount.setTitleTextColor(getResources().getColor(R.color.colorWhite));
-        toolbar_newaccount.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        createToolbar(toolbar);
 
         layout_cellphone_newaccount = (TextInputLayout) findViewById(R.id.layout_cellphone_newaccount);
         layout_password_newaccount = (TextInputLayout) findViewById(R.id.layout_password_newaccount);
@@ -72,6 +65,26 @@ public class NewAccount extends AppCompatActivity implements View.OnClickListene
         button_send_newaccount = (Button) findViewById(R.id.button_send_newaccount);
         button_send_newaccount.setOnClickListener(this);
 
+    }
+
+    private void createToolbar(Toolbar toolbar) {
+        Drawable backIconActionBar = getResources().getDrawable(R.drawable.ic_back_white);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_newaccount);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.title_newaccount);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(backIconActionBar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
     }
 
     @Override
