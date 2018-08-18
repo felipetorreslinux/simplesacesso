@@ -8,6 +8,7 @@ import android.content.Intent;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.androidnetworking.interfaces.OkHttpResponseAndJSONObjectRequestListener;
 import com.simples.acesso.API.API;
 import com.simples.acesso.R;
 import com.simples.acesso.Utils.MaskCellPhone;
@@ -16,6 +17,8 @@ import com.simples.acesso.Views.VerificationSMS;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import okhttp3.Response;
 
 public class Service_NewAccount {
 
