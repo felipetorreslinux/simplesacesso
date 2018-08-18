@@ -2,8 +2,10 @@ package com.simples.acesso.Services;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
@@ -13,6 +15,7 @@ import com.simples.acesso.Models.SlidesIntro;
 import com.simples.acesso.R;
 import com.simples.acesso.Utils.MaskCellPhone;
 import com.simples.acesso.Utils.PreLoads;
+import com.simples.acesso.Views.Principal;
 import com.simples.acesso.Views.Slides_Intro;
 
 import org.json.JSONException;
@@ -22,10 +25,12 @@ public class Service_Login {
 
     Activity activity;
     AlertDialog.Builder builder;
+    SharedPreferences.Editor editor;
 
     public Service_Login(Activity activity){
         this.activity = activity;
         this.builder = new AlertDialog.Builder(activity);
+        this.editor = activity.getSharedPreferences("profile", Context.MODE_PRIVATE).edit();
     }
 
     public void login (String cellphone, String password){
@@ -42,20 +47,15 @@ public class Service_Login {
                         case 0:
                             // Success
                             PreLoads.close();
-                            final int id = response.getJSONObject("profile").getInt("id");
-//                            Intent intent = new Intent(activity, Slides_Intro.class);
-//                            intent.putExtra("id", id);
-//                            activity.startActivity(intent);
-                            builder.setTitle(R.string.app_name);
-                            builder.setMessage("Você logou com sucesso");
-                            builder.setPositiveButton("Sair", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    PreLoads.open(activity, null, "Saindo", false);
-                                    logout(id);
-                                }
-                            });
-                            builder.create().show();
+                            int id = response.getJSONObject("profile").getInt("id");
+                            editor.putInt("id", id);
+                            editor.commit();
+                            if(editor.commit()){
+                                Intent intent = new Intent(activity, Principal.class);
+                                intent.putExtra("id", id);
+                                activity.startActivity(intent);
+                                activity.finishAffinity();
+                            }
                             break;
                         case 100:
                             // User is online
@@ -105,10 +105,9 @@ public class Service_Login {
                         switch (code){
                             case 0:
                                 PreLoads.close();
-                                builder.setTitle(R.string.app_name);
-                                builder.setMessage("Você saiu com sucesso");
-                                builder.setPositiveButton("Ok",  null);
-                                builder.create().show();
+                                editor.putInt("id", 0);
+                                editor.commit();
+                                activity.finish();
                                 break;
                             default:
                                 PreLoads.close();

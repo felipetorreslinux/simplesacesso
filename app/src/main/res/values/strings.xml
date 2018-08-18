@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">Simples Acesso</string>
 
+    <string name="google_api_maps">AIzaSyA1Rf2Bs1XScX-rsi1sWRopc9FlVRgDhjk</string>
+
     <string name="title_newaccount">Novo Usuário</string>
     <string name="info_text_newaccount">Informe seu telefone e crie sua senha de acesso</string>
     <string name="button_send_newaccount">Salvar</string>
     <string name="info_terms_newaccount">Concordo com os Termos de Uso do Simples Acesso.</string>
     <string name="title_verification_sms">Validação SMS</string>
+    <string name="info_exit_app">Deseja realmente sair?</string>
+    <string name="info_update_account">Atualize seu perfil para utilizar todos os nossos serviços</string>
 </resources>
