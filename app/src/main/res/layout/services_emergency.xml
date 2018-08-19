@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_service_emergency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <LinearLayout
+        android:id="@+id/item_sercive_police"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple_white"
+        android:clickable="true"
+        android:padding="16dp"
+        android:layout_marginBottom="1dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_police_car_with_light"
+            android:tint="@color/colorPrimary"
+            android:layout_marginRight="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="16dp"
+            android:fontFamily="@font/roboto"
+            android:text="Polícia"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/item_sercive_ambulance"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple_white"
+        android:clickable="true"
+        android:padding="16dp"
+        android:layout_marginBottom="1dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_ambulace"
+            android:tint="@color/colorPrimary"
+            android:layout_marginRight="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="16dp"
+            android:fontFamily="@font/roboto"
+            android:text="Samu"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/item_sercive_fireman"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple_white"
+        android:clickable="true"
+        android:padding="16dp"
+        android:layout_marginBottom="1dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_fire_truck"
+            android:tint="@color/colorPrimary"
+            android:layout_marginRight="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="16dp"
+            android:fontFamily="@font/roboto"
+            android:text="Bombeiros"/>
+
+    </LinearLayout>
+
+</LinearLayout>

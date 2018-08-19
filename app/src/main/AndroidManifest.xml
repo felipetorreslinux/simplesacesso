@@ -50,6 +50,17 @@
             android:screenOrientation="portrait"
             android:theme="@style/Principal"/>
 
+        <activity android:name=".Views.Services_Emergency"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".Views.Perfil"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
+
+        <activity android:name=".Views.Requests_Services"
+            android:screenOrientation="portrait"/>
+
+
     </application>
 
 </manifest>

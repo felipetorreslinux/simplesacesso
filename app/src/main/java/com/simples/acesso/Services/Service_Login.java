@@ -33,7 +33,7 @@ public class Service_Login {
         this.editor = activity.getSharedPreferences("profile", Context.MODE_PRIVATE).edit();
     }
 
-    public void login (String cellphone, String password){
+    public void login (final String cellphone, final String password){
         AndroidNetworking.post(API.URL_DEV+"/Modules/Login.php")
         .addBodyParameter("cellphone", MaskCellPhone.unmask(cellphone))
         .addBodyParameter("password", password)
@@ -49,6 +49,8 @@ public class Service_Login {
                             PreLoads.close();
                             int id = response.getJSONObject("profile").getInt("id");
                             editor.putInt("id", id);
+                            editor.putString("cellphone", cellphone);
+                            editor.putString("password", password);
                             editor.commit();
                             if(editor.commit()){
                                 Intent intent = new Intent(activity, Principal.class);

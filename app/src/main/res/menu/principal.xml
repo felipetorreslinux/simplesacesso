@@ -3,9 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/person_profile"
+        android:id="@+id/perfil"
         app:showAsAction="never"
-        android:title="Meu Perfil"/>
+        android:title="Perfil"/>
+
+    <item
+        android:id="@+id/calls"
+        app:showAsAction="never"
+        android:title="Solicitações"/>
 
     <item
         android:id="@+id/settings"

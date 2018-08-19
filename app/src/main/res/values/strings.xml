@@ -10,4 +10,12 @@
     <string name="title_verification_sms">Validação SMS</string>
     <string name="info_exit_app">Deseja realmente sair?</string>
     <string name="info_update_account">Atualize seu perfil para utilizar todos os nossos serviços</string>
+    <string name="title_service_emergency">Serviços</string>
+    <string name="info_box_service">Quem você deseja chamar?</string>
+    <string name="title_perfil">Meu Perfil</string>
+    <string name="info_perfil">Suas informações pessoais sempre são verificadas para melhor garantir sua segurança</string>
+    <string name="label_button_save_perfil">Guardar</string>
+    <string name="title_requests_services">Solicitações</string>
+    <string name="info_not_requests_services">Você ainda não realizou nenhuma solicitção</string>
+    <string name="info_ok_save_perfil">Informações salvas com sucesso</string>
 </resources>
