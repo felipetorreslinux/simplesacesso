@@ -17,6 +17,7 @@ public class Notifications {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(activity)
                         .setSmallIcon(icon)
+                        .setAutoCancel(true)
                         .setContentTitle(title)
                         .setContentText(message);
         Intent resultIntent = new Intent(activity, Login.class);

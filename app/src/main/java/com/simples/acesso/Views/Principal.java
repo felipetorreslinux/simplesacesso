@@ -1,16 +1,17 @@
 package com.simples.acesso.Views;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -18,11 +19,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -43,11 +41,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.gson.internal.bind.DateTypeAdapter;
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Location;
 import com.simples.acesso.Services.Service_Login;
 import com.simples.acesso.Utils.PreLoads;
+import com.simples.acesso.Utils.ValidGPS;
 
 public class Principal extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -75,19 +73,19 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     Service_Location serviceLocation;
     double Latitude;
     double Longitude;
-    
-    @SuppressLint("MissingPermission")
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.principal);
+
         navigationView = (NavigationView) findViewById(R.id.navView);
         navigationView.setNavigationItemSelectedListener(this);
-
+        sharedPreferences = getSharedPreferences("profile", MODE_PRIVATE);
         serviceLogin = new Service_Login(this);
         serviceLocation = new Service_Location(this);
         builder = new AlertDialog.Builder(this);
-        sharedPreferences = getSharedPreferences("profile", MODE_PRIVATE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         image_menu = findViewById(R.id.image_menu);
         image_menu.setOnClickListener(this);
@@ -107,12 +105,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
 
         drawerLayout = findViewById(R.id.drawerLayout);
 
-        ActivityCompat.requestPermissions(this, new String[]{
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-        }, 1);
-
-        mapView = (MapView) findViewById(R.id.mapView);
+        mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
     }
@@ -120,33 +113,93 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     @Override
     protected void onResume() {
         super.onResume();
-        localeProfile();
         validDocument();
     }
 
-    private void validDocument(){
-        if (sharedPreferences != null){
-            if(sharedPreferences.getString("document", "").isEmpty()){
-               builder.setTitle(R.string.app_name);
-               builder.setMessage(R.string.info_update_account);
-               builder.setCancelable(false);
-               builder.setPositiveButton("Atualizar", new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface dialog, int which) {
-                       Intent intent = new Intent(Principal.this, Perfil.class);
-                       startActivity(intent);
-                   }
-               });
-               builder.setNegativeButton(null, null);
-               builder.create().show();
-            }else{
-                watchLocation();
+    private void validDocument() {
+        if (sharedPreferences != null) {
+            String document = sharedPreferences.getString("document", "");
+            if (document.equals("")) {
+                builder.setTitle(R.string.app_name);
+                builder.setMessage(R.string.info_update_account);
+                builder.setCancelable(false);
+                builder.setPositiveButton("Atualizar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        builder.create().dismiss();
+                        Intent intent = new Intent(Principal.this, Perfil.class);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton(null, null);
+                builder.create().show();
+            } else {
+                localeProfile();
             }
         }
     }
 
-    private void watchLocation(){
-        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+    @SuppressLint("MissingPermission")
+    private void localeProfile() {
+        if(ValidGPS.check(this) == false){
+            builder.setTitle(R.string.app_name);
+            builder.setMessage(R.string.info_not_gps);
+            builder.setCancelable(false);
+            builder.setPositiveButton("Ativar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1010);
+                }
+            });
+            builder.create().show();
+        }else{
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            mFusedLocationClient.getLastLocation()
+            .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(final Location location) {
+                    Latitude = location.getLatitude();
+                    Longitude = location.getLongitude();
+                    if (location != null) {
+                        try {
+                            MapsInitializer.initialize(getApplicationContext());
+                            mapReady(location);
+                        } catch (Exception e) {}
+                    } else {
+                        MapsInitializer.initialize(getApplicationContext());
+                        mapView.onResume();
+                    }
+                }
+            });
+        }
+    }
+
+    private void mapReady(final Location location){
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
+                googleMap.setMyLocationEnabled(true);
+                googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                googleMap.setBuildingsEnabled(true);
+                googleMap.setIndoorEnabled(true);
+                googleMap.setTrafficEnabled(false);
+                googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style));
+
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+                googleMap.animateCamera(cameraUpdate);
+                mapView.onResume();
+                watchLocation();
+
+            }
+        });
+    }
+
+    private void watchLocation() {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -156,28 +209,6 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 name_location.setText(serviceLocation.getAddress(location.getLatitude(), location.getLongitude()));
             }
         };
-    }
-
-    @SuppressLint("MissingPermission")
-    private void localeProfile() {
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mFusedLocationClient.getLastLocation()
-        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(final Location location) {
-                Latitude = location.getLatitude();
-                Longitude = location.getLongitude();
-                if (location != null) {
-                    try{
-                        MapsInitializer.initialize(getApplicationContext());
-                        mapReady(location);
-                    }catch (Exception e){}
-                }else{
-                    MapsInitializer.initialize(getApplicationContext());
-                    mapView.onResume();
-                }
-            }
-        });
     }
 
     @Override
@@ -236,30 +267,6 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         finish();
     }
 
-    private void mapReady(final Location location){
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-                googleMap.getUiSettings().setMapToolbarEnabled(false);
-                googleMap.setMyLocationEnabled(true);
-                googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-                googleMap.setBuildingsEnabled(true);
-                googleMap.setIndoorEnabled(true);
-                googleMap.setTrafficEnabled(false);
-                googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style));
-
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-                googleMap.animateCamera(cameraUpdate);
-                mapView.onResume();
-
-            }
-        });
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
@@ -288,7 +295,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                             button_send_service.setText("Chamar Polícia");
                             break;
                         case 2:
-                            button_send_service.setText("Chamar Ambulância");
+                            button_send_service.setText("Chamar Samu");
                             break;
                         case 3:
                             button_send_service.setText("Chamar Bombeiros");
@@ -314,6 +321,11 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 if(resultCode == Activity.RESULT_OK){
                     Toast.makeText(this, R.string.info_ok_save_perfil, Toast.LENGTH_SHORT).show();
                 }
+                break;
+
+            case 1010:
+                builder.create().dismiss();
+                localeProfile();
                 break;
         }
     }

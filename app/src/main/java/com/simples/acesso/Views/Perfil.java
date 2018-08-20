@@ -10,20 +10,22 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.simples.acesso.R;
+import com.simples.acesso.Services.Service_Perfil;
 import com.simples.acesso.Utils.MaskCPF;
 import com.simples.acesso.Utils.MaskCellPhone;
+import com.simples.acesso.Utils.PreLoads;
 import com.simples.acesso.Utils.ValidEmail;
 import com.simples.acesso.Utils.ValidaCPF;
 
 public class Perfil extends AppCompatActivity implements View.OnClickListener {
 
-    SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences;
 
     Toolbar toolbar;
@@ -40,12 +42,14 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
 
     Button button_save_perfil;
 
+    Service_Perfil servicePerfil;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.perfil);
+        servicePerfil = new Service_Perfil(this);
 
-        editor = getSharedPreferences("profile", MODE_PRIVATE).edit();
         sharedPreferences = getSharedPreferences("profile", MODE_PRIVATE);
 
         createToolbar(toolbar);
@@ -62,10 +66,10 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
         cellphone_perfil = findViewById(R.id.cellphone_perfil);
         cellphone_perfil.addTextChangedListener(MaskCellPhone.insert(cellphone_perfil));
 
-        document_perfil.setText(sharedPreferences.getString("document", null));
-        name_perfil.setText(sharedPreferences.getString("name", null));
-        email_perfil.setText(sharedPreferences.getString("email", null));
-        cellphone_perfil.setText(sharedPreferences.getString("cellphone", null));
+        document_perfil.setText(sharedPreferences.getString("document", ""));
+        name_perfil.setText(sharedPreferences.getString("name", ""));
+        email_perfil.setText(sharedPreferences.getString("email", ""));
+        cellphone_perfil.setText(sharedPreferences.getString("cellphone", ""));
 
         if(!document_perfil.getText().toString().isEmpty()){
             document_perfil.setEnabled(false);
@@ -189,17 +193,9 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
             layout_email_perfil.setErrorEnabled(false);
             layout_cellphone_perfil.setErrorEnabled(false);
 
-            editor.putString("document", document);
-            editor.putString("name", name);
-            editor.putString("email", email);
-            editor.putString("cellphone", cellphone);
-            editor.commit();
+            PreLoads.open(this, null, "Atualizando informações", false);
 
-            if(editor.commit()){
-                Intent intent = getIntent();
-                setResult(Activity.RESULT_OK, intent);
-                finish();
-            }
+            servicePerfil.change(cellphone, document, email, name);
 
         }
     }

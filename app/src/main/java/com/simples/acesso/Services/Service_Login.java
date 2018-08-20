@@ -48,13 +48,23 @@ public class Service_Login {
                             // Success
                             PreLoads.close();
                             int id = response.getJSONObject("profile").getInt("id");
+                            String document = response.getJSONObject("profile").getString("document");
+                            String name = response.getJSONObject("profile").getString("name");
+                            String email = response.getJSONObject("profile").getString("email");
+                            int created_at = response.getJSONObject("profile").getInt("created_at");
+                            String token = response.getJSONObject("profile").getString("token");
+                            System.out.println(token);
                             editor.putInt("id", id);
+                            editor.putString("document", document);
+                            editor.putString("name", name);
+                            editor.putString("email", email);
                             editor.putString("cellphone", cellphone);
                             editor.putString("password", password);
+                            editor.putInt("created_at", created_at);
+                            editor.putString("token", token);
                             editor.commit();
                             if(editor.commit()){
                                 Intent intent = new Intent(activity, Principal.class);
-                                intent.putExtra("id", id);
                                 activity.startActivity(intent);
                                 activity.finishAffinity();
                             }

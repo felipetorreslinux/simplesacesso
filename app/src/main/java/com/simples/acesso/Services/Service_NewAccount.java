@@ -30,7 +30,7 @@ public class Service_NewAccount {
         this.builder = new AlertDialog.Builder(activity);
     }
 
-    public void register (final String cellphone, String password){
+    public void register (final String cellphone, final String password){
         AndroidNetworking.post(API.URL_DEV+"Modules/NewAccountApp.php")
             .addBodyParameter("cellphone", MaskCellPhone.unmask(cellphone))
             .addBodyParameter("password",password)
@@ -45,6 +45,7 @@ public class Service_NewAccount {
                                 PreLoads.close();
                                 Intent intent = new Intent(activity, VerificationSMS.class);
                                 intent.putExtra("cellphone", cellphone);
+                                intent.putExtra("password", password);
                                 activity.startActivity(intent);
                                 activity.finish();
                                 break;

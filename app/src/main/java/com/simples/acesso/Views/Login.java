@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 
 import com.simples.acesso.FireBase.PhoneNumberSMS.CallBackPhoneNumberValid;
 import com.simples.acesso.FireBase.PhoneNumberSMS.PhoneNumberFirebase;
+import com.simples.acesso.Manifest;
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Login;
 import com.simples.acesso.Utils.MaskCellPhone;
@@ -33,6 +35,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        ActivityCompat.requestPermissions(this, new String[]{
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+        }, 1);
 
         serviceLogin = new Service_Login(this);
 
