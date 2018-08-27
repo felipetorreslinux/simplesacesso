@@ -1,12 +1,15 @@
 package com.simples.acesso.Views;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,11 +25,7 @@ import com.simples.acesso.Utils.PreLoads;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
-    EditText cellphone_login;
-    EditText password_login;
-    TextInputLayout layout_cellphone_login;
-    TextInputLayout layout_password_login;
-    Button button_login;
+    Toolbar toolbar;
 
     Service_Login serviceLogin;
 
@@ -36,60 +35,53 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
+        createToolbar(toolbar);
+
         ActivityCompat.requestPermissions(this, new String[]{
                 android.Manifest.permission.ACCESS_COARSE_LOCATION,
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.READ_PHONE_NUMBERS,
+                android.Manifest.permission.READ_PHONE_STATE,
+                android.Manifest.permission.CALL_PHONE
         }, 1);
 
         serviceLogin = new Service_Login(this);
-
-        layout_cellphone_login = (TextInputLayout) findViewById(R.id.layout_cellphone_login);
-        layout_password_login = (TextInputLayout) findViewById(R.id.layout_password_login);
-
-        cellphone_login = (EditText) findViewById(R.id.cellphone_login);
-        password_login = (EditText) findViewById(R.id.password_login);
-
-        cellphone_login.addTextChangedListener(MaskCellPhone.insert(cellphone_login));
-
-        button_login = (Button) findViewById(R.id.button_login);
-        button_login.setOnClickListener(this);
-
-        try {
-            cellphone_login.setText(getIntent().getExtras().getString("cellphone"));
-            password_login.requestFocus();
-        }catch (NullPointerException e){}
-
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void createToolbar(Toolbar toolbar) {
+        Drawable backIconActionBar = getResources().getDrawable(R.drawable.ic_back_purple);
+        toolbar = (Toolbar) findViewById(R.id.login_topbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Entrar");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(backIconActionBar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.button_login:
-               String cellphone = cellphone_login.getText().toString().trim();
-               String password = password_login.getText().toString().trim();
-                if(cellphone.isEmpty()){
-                    layout_cellphone_login.setErrorEnabled(true);
-                    layout_password_login.setErrorEnabled(false);
-                    layout_cellphone_login.setError("Informe seu número de telefone");
-                }else if(cellphone.length() < 14){
-                    layout_cellphone_login.setErrorEnabled(true);
-                    layout_password_login.setErrorEnabled(false);
-                    layout_cellphone_login.setError("Número de telefone inválido");
-                }else if(password.isEmpty()){
-                    layout_cellphone_login.setErrorEnabled(false);
-                    layout_password_login.setErrorEnabled(true);
-                    layout_password_login.setError("Informe sua senha");
-                }else{
-                    layout_cellphone_login.setErrorEnabled(false);
-                    layout_password_login.setErrorEnabled(false);
-                    PreLoads.open(this, null, "Autorizando...", true);
-                    serviceLogin.login(cellphone, password);
 
-                }
-                break;
-        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }
