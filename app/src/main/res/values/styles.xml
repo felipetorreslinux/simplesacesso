@@ -24,6 +24,7 @@
     <style name="VerificationSMS" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:statusBarColor" tools:ignore="NewApi">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimaryDark</item>
+        <item name="actionMenuTextColor">@color/colorPrimary</item>
     </style>
 
     <style name="Principal" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -42,6 +43,11 @@
 
     <style name="ButtonMenuWhite" parent="@style/Widget.AppCompat.ActionButton.Overflow" >
         <item name="android:tint">@color/colorWhite</item>
+    </style>
+
+    <style name="CustomDialog" parent="android:Theme.Dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
 </resources>

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/tools"
     android:background="@color/colorWhite"
     android:orientation="vertical">
 
@@ -30,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/colorGray"
-        android:text="Informe seu número de telefone com o DDD para proseeguir"
+        android:text="@string/info_label2_login"
         android:textSize="13dp"
         android:paddingHorizontal="10dp"/>
 
@@ -54,6 +55,16 @@
             android:textStyle="bold"/>
 
     </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="16dp"
+        android:src="@drawable/ic_back_white"
+        android:rotation="180"/>
 
 
 </LinearLayout>

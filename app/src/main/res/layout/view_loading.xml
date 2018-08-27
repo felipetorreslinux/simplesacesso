@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/colorWhite"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/info_loading"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:maxHeight="100dp"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorWhite"
+        android:fontFamily="@font/roboto"/>
+
+</RelativeLayout>

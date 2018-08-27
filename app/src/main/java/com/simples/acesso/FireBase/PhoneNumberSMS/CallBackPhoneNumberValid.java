@@ -13,6 +13,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 public class CallBackPhoneNumberValid extends PhoneAuthProvider.OnVerificationStateChangedCallbacks {
 
     View view;
+    public static String code = null;
 
     public CallBackPhoneNumberValid(View view){
         this.view = view;
@@ -20,18 +21,15 @@ public class CallBackPhoneNumberValid extends PhoneAuthProvider.OnVerificationSt
 
     @Override
     public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-        String code = phoneAuthCredential.getSmsCode();
-        Snackbar.make(view, "Código SMS: "+code, Snackbar.LENGTH_LONG).show();
+        code = phoneAuthCredential.getSmsCode();
     }
 
     @Override
     public void onVerificationFailed(FirebaseException e) {
         if (e instanceof FirebaseAuthInvalidCredentialsException) {
-            //Numero inválido
-            Snackbar.make(view, "Número de telefone inválido", Snackbar.LENGTH_LONG).show();
+            code = null;
         } else if (e instanceof FirebaseTooManyRequestsException) {
-            //Quantidade excedida
-            Snackbar.make(view, "Tentativas excedidas.\nTente após 30 minutos", Snackbar.LENGTH_LONG).show();
+            code = null;
         }
     }
 }
