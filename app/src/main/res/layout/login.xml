@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorWhite"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -13,6 +14,46 @@
         android:elevation="0dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/info_login_label"
+        android:textSize="20dp"
+        android:fontFamily="@font/roboto"
+        android:layout_marginTop="16dp"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="10dp"
+        android:textColor="@color/colorPrimary"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorGray"
+        android:text="Informe seu número de telefone com o DDD para proseeguir"
+        android:textSize="13dp"
+        android:paddingHorizontal="10dp"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_cellphone_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Telefone"
+        android:paddingHorizontal="10dp"
+        android:layout_marginTop="24dp">
+
+
+        <EditText
+            android:id="@+id/cellphone_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto"
+            android:textSize="25dp"
+            android:inputType="number"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"/>
+
+    </android.support.design.widget.TextInputLayout>
 
 
 </LinearLayout>

@@ -20,4 +20,5 @@
     <string name="info_ok_save_perfil">Informações salvas com sucesso</string>
     <string name="info_not_gps">Você precisa habilitar seu GPS</string>
     <string name="info_error_code_sms">Código inválido</string>
+    <string name="info_login_label">Qual seu número de telefone?</string>
 </resources>
