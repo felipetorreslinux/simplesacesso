@@ -10,43 +10,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:layout_above="@id/bottom_bar_intro"/>
+        android:layout_above="@id/button_open_login"/>
 
-    <LinearLayout
-        android:id="@+id/bottom_bar_intro"
+    <TextView
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
+        android:id="@+id/button_open_login"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/colorPrimaryDark"
-        android:weightSum="2">
-
-        <TextView
-            android:layout_weight="1"
-            android:id="@+id/button_open_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:text="Entrar"
-            android:textColor="@color/colorWhite"
-            android:textAllCaps="true"
-            android:layout_gravity="center"
-            android:gravity="center"/>
-
-
-        <TextView
-            android:layout_weight="1"
-            android:id="@+id/button_open_new_account"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:text="Cadastrar"
-            android:textAllCaps="true"
-            android:textColor="@color/colorWhite"
-            android:layout_gravity="center"
-            android:gravity="center"/>
-
-
-    </LinearLayout>
+        android:layout_height="50dp"
+        android:fontFamily="@font/roboto"
+        android:text="Começar"
+        android:textColor="@color/colorWhite"
+        android:background="@color/colorPrimary"
+        android:textAllCaps="true"
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
 </RelativeLayout>

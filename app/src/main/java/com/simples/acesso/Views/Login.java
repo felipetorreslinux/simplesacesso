@@ -4,9 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -14,23 +13,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.simples.acesso.FireBase.PhoneNumberSMS.CallBackPhoneNumberValid;
-import com.simples.acesso.FireBase.PhoneNumberSMS.PhoneNumberFirebase;
-import com.simples.acesso.Manifest;
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Login;
 import com.simples.acesso.Utils.Cellphone;
 import com.simples.acesso.Utils.Keyboard;
 import com.simples.acesso.Utils.MaskCellPhone;
-import com.simples.acesso.Utils.PreLoads;
 
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
@@ -100,27 +92,31 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             builder.setMessage("Começar com");
             builder.setView(view);
             builder.setCancelable(false);
-            builder.setPositiveButton("Outro número", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Keyboard.open(Login.this, cellphone_login);
-                    cellphone_login.requestFocus();
-                    button_login.setVisibility(View.GONE);
-                }
-            });
-            final AlertDialog alertDialog = builder.create();
-            alertDialog.show();
 
             final TextView number_cellphone = view.findViewById(R.id.number_cellphone);
             number_cellphone.setText(cellphone.get());
-            number_cellphone.setOnClickListener(new View.OnClickListener() {
+
+            builder.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    alertDialog.dismiss();
+                public void onClick(DialogInterface dialog, int which) {
                     cellphone_login.setText(number_cellphone.getText().toString().trim());
                     button_login.setVisibility(View.VISIBLE);
                 }
             });
+            builder.setNegativeButton("Outro Número", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    cellphone_login.requestFocus();
+                    cellphone_login.setText(null);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Keyboard.open(Login.this, cellphone_login);
+                        }
+                    }, 100);
+                }
+            });
+            builder.create().show();
         }else{
             Keyboard.open(Login.this, cellphone_login);
             button_login.setVisibility(View.GONE);

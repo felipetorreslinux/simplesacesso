@@ -37,6 +37,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="22dp"
+            android:inputType="number"
+            android:maxLength="6"
             android:fontFamily="@font/roboto"
             android:textColor="@color/colorPrimary"/>
 

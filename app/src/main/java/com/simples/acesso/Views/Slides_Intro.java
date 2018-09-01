@@ -28,8 +28,6 @@ public class Slides_Intro extends AppCompatActivity implements View.OnClickListe
     List<SlidesIntro> list_slides = new ArrayList<SlidesIntro>();
 
     TextView button_open_login;
-    TextView button_open_new_account;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,8 +38,6 @@ public class Slides_Intro extends AppCompatActivity implements View.OnClickListe
         ultraviewpager_intro = (UltraViewPager) findViewById(R.id.ultraviewpager_intro);
         button_open_login = (TextView) findViewById(R.id.button_open_login);
         button_open_login.setOnClickListener(this);
-        button_open_new_account = (TextView) findViewById(R.id.button_open_new_account);
-        button_open_new_account.setOnClickListener(this);
     }
 
     @Override
@@ -86,11 +82,6 @@ public class Slides_Intro extends AppCompatActivity implements View.OnClickListe
             case R.id.button_open_login:
                 Intent login = new Intent(this, Login.class);
                 startActivity(login);
-                break;
-
-            case R.id.button_open_new_account:
-                Intent newaccount = new Intent(this, NewAccount.class);
-                startActivityForResult(newaccount, 1000);
                 break;
         }
     }

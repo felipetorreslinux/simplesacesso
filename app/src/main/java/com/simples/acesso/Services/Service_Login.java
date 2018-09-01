@@ -11,13 +11,10 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.simples.acesso.API.API;
-import com.simples.acesso.FireBase.PhoneNumberSMS.PhoneNumberFirebase;
-import com.simples.acesso.Models.SlidesIntro;
 import com.simples.acesso.R;
 import com.simples.acesso.Utils.MaskCellPhone;
 import com.simples.acesso.Utils.PreLoads;
 import com.simples.acesso.Views.Principal;
-import com.simples.acesso.Views.Slides_Intro;
 import com.simples.acesso.Views.VerificationSMS;
 
 import org.json.JSONException;
@@ -37,42 +34,10 @@ public class Service_Login {
 
     public void check_cellphone (String cellphone){
 
-        PhoneNumberFirebase.send(activity, cellphone, activity.getWindow().getDecorView());
         Intent intent = new Intent(activity, VerificationSMS.class);
         intent.putExtra("cellphone", cellphone);
         activity.startActivity(intent);
 
-//        AndroidNetworking.post(API.URL_DEV+"")
-//        .addBodyParameter("cellphone", cellphone)
-//        .build()
-//        .getAsJSONObject(new JSONObjectRequestListener() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                try{
-//                    int code = response.getInt("code");
-//                    switch (code){
-//                        case 0:
-//
-//                            break;
-//                        default:
-//
-//                            break;
-//                    }
-//                }catch (JSONException e){}
-//            }
-//
-//            @Override
-//            public void onError(ANError anError) {
-//                API.ErrorSever(activity, anError.getErrorCode());
-//            }
-//        });
-    }
-
-    public void check_sms(String code, String sms){
-        Intent intent = new Intent(activity, Principal.class);
-        if (code.equals(sms)){
-            activity.startActivity(intent);
-        }
     }
 
     public void login (final String cellphone, final String password){

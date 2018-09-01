@@ -1,21 +1,16 @@
 package com.simples.acesso.Views;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.content.res.ColorStateList;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,16 +18,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.simples.acesso.FireBase.PhoneNumberSMS.CallBackPhoneNumberValid;
-import com.simples.acesso.FireBase.PhoneNumberSMS.PhoneNumberFirebase;
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Login;
-import com.simples.acesso.Utils.Keyboard;
-import com.simples.acesso.Utils.MaskCellPhone;
-import com.simples.acesso.Utils.Notifications;
-import com.simples.acesso.Utils.PreLoads;
 
-import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class VerificationSMS extends AppCompatActivity implements View.OnClickListener {
 
@@ -49,6 +40,7 @@ public class VerificationSMS extends AppCompatActivity implements View.OnClickLi
 
     Service_Login serviceLogin;
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,24 +57,14 @@ public class VerificationSMS extends AppCompatActivity implements View.OnClickLi
         layout_code_sms = findViewById(R.id.layout_code_sms);
 
         code_sms = findViewById(R.id.code_sms);
-        code_sms.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void afterTextChanged(Editable s) {}
-            @SuppressLint("RestrictedApi")
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() > 5){
-                    button_sms.setVisibility(View.VISIBLE);
-                }else{
-                    button_sms.setVisibility(View.GONE);
-                }
-            }
-        });
 
         button_sms = findViewById(R.id.button_sms);
+        button_sms.setVisibility(View.GONE);
         button_sms.setOnClickListener(this);
+
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                "+55"+cellphone, 60, TimeUnit.SECONDS, VerificationSMS.this,
+                new CallBackPhoneNumberValid(VerificationSMS.this, code_sms, button_sms));
 
     }
 
@@ -116,7 +98,9 @@ public class VerificationSMS extends AppCompatActivity implements View.OnClickLi
                 count.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        PhoneNumberFirebase.send(VerificationSMS.this, cellphone, getWindow().getDecorView());
+                        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                                "+55"+cellphone, 60, TimeUnit.SECONDS, VerificationSMS.this,
+                                new CallBackPhoneNumberValid(VerificationSMS.this, code_sms, button_sms));
                         count();
                         return false;
                     }
@@ -149,19 +133,24 @@ public class VerificationSMS extends AppCompatActivity implements View.OnClickLi
                     layout_code_sms.setErrorEnabled(true);
                     layout_code_sms.setError("Código inválido");
                     code_sms.requestFocus();
-                }else if(CallBackPhoneNumberValid.code.equals(null)){
-                    layout_code_sms.setErrorEnabled(true);
-                    layout_code_sms.setError("Código ainda não foi recebido.\nAguarde...");
-                    code_sms.requestFocus();
                 }else{
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialog);
+                    layout_code_sms.setErrorEnabled(false);
+                    layout_code_sms.setError(null);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialog);
                     View loading = getLayoutInflater().inflate(R.layout.view_loading, null);
                     builder.setView(loading);
                     builder.setCancelable(false);
-                    builder.create().show();
+                    final AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
                     TextView info_loading = loading.findViewById(R.id.info_loading);
                     info_loading.setText("Validando Código SMS");
-
+                    new CountDownTimer(4000, 1000) {
+                        public void onTick(long millisUntilFinished) {}
+                        public void onFinish() {
+                            startActivity(new Intent(VerificationSMS.this, Principal.class));
+                            finishAffinity();
+                        }
+                    }.start();
                 }
                 break;
         }
