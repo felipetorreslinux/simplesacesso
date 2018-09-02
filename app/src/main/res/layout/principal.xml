@@ -36,48 +36,17 @@
             android:padding="2.5dp"
             android:src="@drawable/ic_person" />
 
-        <ImageView
-            android:id="@+id/item_police_open"
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottom_bar_itens_principal"
             android:layout_alignParentBottom="true"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/icon_person"
-            android:clickable="true"
-            android:elevation="4dp"
-            android:src="@drawable/ic_policia"
-            android:padding="5dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            app:itemIconTint="@color/colorPrimary"
+            app:itemTextColor="@color/colorPrimary"
+            app:menu="@menu/menu_itens_principal" >
 
-        <ImageView
-            android:id="@+id/item_ambulance_open"
-            android:layout_marginBottom="24dp"
-            android:layout_centerInParent="true"
-            android:layout_alignParentBottom="true"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/icon_person"
-            android:clickable="true"
-            android:elevation="4dp"
-            android:src="@drawable/ic_samu"
-            android:padding="5dp"/>
-
-
-        <ImageView
-            android:id="@+id/item_firetruck_open"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/icon_person"
-            android:clickable="true"
-            android:elevation="4dp"
-            android:src="@drawable/ic_bombeiros"
-            android:padding="5dp"/>
-
+        </android.support.design.widget.BottomNavigationView>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -98,7 +67,5 @@
                     android:background="@drawable/bundle_map_user"/>
 
         </LinearLayout>
-
-
 
 </RelativeLayout>

@@ -12,7 +12,9 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -77,14 +79,12 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     Service_Login serviceLogin;
     SharedPreferences sharedPreferences;
 
-    ImageView item_police_open;
-    ImageView item_ambulance_open;
-    ImageView item_firetruck_open;
-
     ImageView item_person_perfil;
     ImageView item_my_location;
 
     TextView location_info;
+
+    BottomNavigationView bottom_bar_itens_principal;
 
     MapView mapView;
     Marker youPerson;
@@ -135,14 +135,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
 
         location_info = findViewById(R.id.location_info);
 
-        item_police_open = findViewById(R.id.item_police_open);
-        item_ambulance_open = findViewById(R.id.item_ambulance_open);
-        item_firetruck_open = findViewById(R.id.item_firetruck_open);
-
-        item_ambulance_open.setOnClickListener(this);
-        item_police_open.setOnClickListener(this);
-        item_firetruck_open.setOnClickListener(this);
-
+        openAttendence();
     }
 
     @Override
@@ -275,27 +268,36 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         };
     }
 
-    private void openAttendence(int type){
-        switch (type){
-            case 0:
-                Intent police = new Intent(this, Services_Emergency.class);
-                police.putExtra("type_service", 1);
-                police.putExtra("local_user", serviceLocation.getAddress(Latitude, Longitude));
-                startActivityForResult(police,1010);
-                break;
-            case 1:
-                Intent ambulance = new Intent(this, Services_Emergency.class);
-                ambulance.putExtra("type_service", 2);
-                ambulance.putExtra("local_user", serviceLocation.getAddress(Latitude, Longitude));
-                startActivityForResult(ambulance,1010);
-                break;
-            case 2:
-                Intent fireman = new Intent(this, Services_Emergency.class);
-                fireman.putExtra("type_service", 3);
-                fireman.putExtra("local_user", serviceLocation.getAddress(Latitude, Longitude));
-                startActivityForResult(fireman,1010);
-                break;
-        }
+    private void openAttendence(){
+        bottom_bar_itens_principal = findViewById(R.id.bottom_bar_itens_principal);
+        bottom_bar_itens_principal.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.item_police:
+                        Intent police = new Intent(Principal.this, Services_Emergency.class);
+                        police.putExtra("type_service", 1);
+                        police.putExtra("local_user", location_info.getText().toString().trim());
+                        startActivityForResult(police,1010);
+                        break;
+
+                    case R.id.item_ambulance:
+                        Intent ambulance = new Intent(Principal.this, Services_Emergency.class);
+                        ambulance.putExtra("type_service", 2);
+                        ambulance.putExtra("local_user", location_info.getText().toString().trim());
+                        startActivityForResult(ambulance,1010);
+                        break;
+
+                    case R.id.item_fireman:
+                        Intent fireman = new Intent(Principal.this, Services_Emergency.class);
+                        fireman.putExtra("type_service", 3);
+                        fireman.putExtra("local_user", location_info.getText().toString().trim());
+                        startActivityForResult(fireman,1010);
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -307,17 +309,6 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 break;
             case R.id.item_my_location:
                 localeProfile();
-                break;
-            case R.id.item_police_open:
-                openAttendence(0);
-                break;
-
-            case R.id.item_ambulance_open:
-                openAttendence(1);
-                break;
-
-            case R.id.item_firetruck_open:
-                openAttendence(2);
                 break;
         }
     }
