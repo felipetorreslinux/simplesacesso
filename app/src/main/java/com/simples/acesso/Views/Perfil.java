@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -11,10 +12,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Perfil;
@@ -23,12 +27,17 @@ import com.simples.acesso.Utils.MaskCellPhone;
 import com.simples.acesso.Utils.PreLoads;
 import com.simples.acesso.Utils.ValidEmail;
 import com.simples.acesso.Utils.ValidaCPF;
+import com.squareup.picasso.Picasso;
+
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class Perfil extends AppCompatActivity implements View.OnClickListener {
 
     SharedPreferences sharedPreferences;
 
     Toolbar toolbar;
+
+    ImageView image_profile;
 
     TextInputLayout layout_document_perfil;
     TextInputLayout layout_name_perfil;
@@ -40,19 +49,20 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
     EditText email_perfil;
     EditText cellphone_perfil;
 
-    Button button_save_perfil;
-
     Service_Perfil servicePerfil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.perfil);
+        overridePendingTransition(R.anim.slide_left, R.anim.fade_out);
         servicePerfil = new Service_Perfil(this);
 
         sharedPreferences = getSharedPreferences("profile", MODE_PRIVATE);
 
         createToolbar(toolbar);
+
+        image_profile = findViewById(R.id.image_profile);
 
         layout_document_perfil = findViewById(R.id.layout_document_perfil);
         layout_name_perfil = findViewById(R.id.layout_name_perfil);
@@ -66,6 +76,23 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
         cellphone_perfil = findViewById(R.id.cellphone_perfil);
         cellphone_perfil.addTextChangedListener(MaskCellPhone.insert(cellphone_perfil));
 
+
+        if(sharedPreferences.getString("image", "").isEmpty()){
+            Picasso.with(this)
+                    .load(R.drawable.no_image)
+                    .transform(new CropCircleTransformation())
+                    .resize(200,200)
+                    .into(image_profile);
+        }else{
+            Picasso.with(this)
+                    .load(sharedPreferences.getString("image", ""))
+                    .transform(new CropCircleTransformation())
+                    .resize(200,200)
+                    .into(image_profile);
+        }
+
+
+
         document_perfil.setText(sharedPreferences.getString("document", ""));
         name_perfil.setText(sharedPreferences.getString("name", ""));
         email_perfil.setText(sharedPreferences.getString("email", ""));
@@ -75,9 +102,6 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
             document_perfil.setEnabled(false);
             name_perfil.setEnabled(false);
         }
-
-        button_save_perfil = findViewById(R.id.button_save_perfil);
-        button_save_perfil.setOnClickListener(this);
 
     }
 
@@ -92,10 +116,22 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_perfil_profile, menu);
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                break;
+
+            case R.id.save_dados_profile:
+                savePerfil();
                 break;
         }
         return true;
@@ -104,9 +140,7 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.button_save_perfil:
-                savePerfil();
-                break;
+
         }
     }
 

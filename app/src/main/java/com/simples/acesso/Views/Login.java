@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
@@ -100,7 +101,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     cellphone_login.setText(number_cellphone.getText().toString().trim());
-                    button_login.setVisibility(View.VISIBLE);
+                    serviceLogin.check_cellphone(MaskCellPhone.unmask(cellphone_login.getText().toString().trim()));
                 }
             });
             builder.setNegativeButton("Outro Número", new DialogInterface.OnClickListener() {
@@ -150,13 +151,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.button_login:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialog);
-                View loading = getLayoutInflater().inflate(R.layout.view_loading, null);
-                builder.setView(loading);
-                builder.setCancelable(false);
-                builder.create().show();
-                TextView info_loading = loading.findViewById(R.id.info_loading);
-                info_loading.setText("Verificando Telefone");
                 serviceLogin.check_cellphone(MaskCellPhone.unmask(cellphone_login.getText().toString().trim()));
                 break;
         }

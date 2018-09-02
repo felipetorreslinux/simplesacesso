@@ -19,6 +19,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -35,36 +37,43 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.simples.acesso.Adapters.Adapter_InfoWindow;
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Location;
 import com.simples.acesso.Services.Service_Login;
 import com.simples.acesso.Utils.PreLoads;
 import com.simples.acesso.Utils.ValidGPS;
+import com.squareup.picasso.Picasso;
 
-public class Principal extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
-    NavigationView navigationView;
-    DrawerLayout drawerLayout;
+public class Principal extends AppCompatActivity implements View.OnClickListener{
+
     AlertDialog.Builder builder;
+    AlertDialog alertDialog;
     Service_Login serviceLogin;
     SharedPreferences sharedPreferences;
-    ImageView image_menu;
 
-    LinearLayout item_service_emergency;
-    LinearLayout item_location_service;
-    ImageView image_service;
-    TextView name_service;
-    TextView name_location;
+    LinearLayout item_police_open;
+    LinearLayout item_ambulance_open;
+    LinearLayout item_firetruck_open;
 
-    Button button_send_service;
+    ImageView item_person_perfil;
+    ImageView item_my_location;
 
     MapView mapView;
+    Marker youPerson;
     GoogleMap googleMap;
     LocationManager locationManager;
     LocationListener locationListener;
@@ -79,41 +88,53 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.principal);
 
-        navigationView = (NavigationView) findViewById(R.id.navView);
-        navigationView.setNavigationItemSelectedListener(this);
         sharedPreferences = getSharedPreferences("profile", MODE_PRIVATE);
         serviceLogin = new Service_Login(this);
         serviceLocation = new Service_Location(this);
+        serviceLocation.listAttendence();
+
         builder = new AlertDialog.Builder(this);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        image_menu = findViewById(R.id.image_menu);
-        image_menu.setOnClickListener(this);
+        item_person_perfil = findViewById(R.id.item_person_perfil);
+        item_person_perfil.setOnClickListener(this);
 
-        item_service_emergency = findViewById(R.id.item_service_emergency);
-        item_service_emergency.setOnClickListener(this);
+        if(sharedPreferences.getString("image", "").isEmpty()){
+            Picasso.with(this)
+                    .load(R.drawable.no_image)
+                    .transform(new CropCircleTransformation())
+                    .resize(200,200)
+                    .into(item_person_perfil);
+        }else{
+            Picasso.with(this)
+                    .load(sharedPreferences.getString("image", ""))
+                    .transform(new CropCircleTransformation())
+                    .resize(200,200)
+                    .into(item_person_perfil);
+        }
 
-        item_location_service = findViewById(R.id.item_location_service);
-        name_location = findViewById(R.id.name_location);
-
-        image_service = findViewById(R.id.image_service);
-        name_service = findViewById(R.id.name_service);
-
-        button_send_service = findViewById(R.id.button_send_service);
-        button_send_service.setVisibility(View.GONE);
-        button_send_service.setOnClickListener(this);
-
-        drawerLayout = findViewById(R.id.drawerLayout);
+        item_my_location = findViewById(R.id.item_my_location);
+        item_my_location.setOnClickListener(this);
 
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+
+
+        item_police_open = findViewById(R.id.item_police_open);
+        item_ambulance_open = findViewById(R.id.item_ambulance_open);
+        item_firetruck_open = findViewById(R.id.item_firetruck_open);
+
+        item_ambulance_open.setOnClickListener(this);
+        item_police_open.setOnClickListener(this);
+        item_firetruck_open.setOnClickListener(this);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        validDocument();
+//        validDocument();
+        localeProfile();
     }
 
     private void validDocument() {
@@ -168,6 +189,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                     } else {
                         MapsInitializer.initialize(getApplicationContext());
                         mapView.onResume();
+                        item_my_location.setVisibility(View.GONE);
                     }
                 }
             });
@@ -178,22 +200,48 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         mapView.getMapAsync(new OnMapReadyCallback() {
             @SuppressLint("MissingPermission")
             @Override
-            public void onMapReady(GoogleMap googleMap) {
+            public void onMapReady(final GoogleMap googleMap) {
 
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
+                if(youPerson != null){
+                    youPerson.remove();
+                }
+
+                youPerson = googleMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .flat(false)
+                        .draggable(false));
+
                 googleMap.getUiSettings().setMapToolbarEnabled(false);
-                googleMap.setMyLocationEnabled(true);
-                googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                 googleMap.setBuildingsEnabled(true);
                 googleMap.setIndoorEnabled(true);
-                googleMap.setTrafficEnabled(false);
                 googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style));
 
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+                googleMap.setInfoWindowAdapter(new Adapter_InfoWindow(Principal.this, location.getLatitude(), location.getLongitude()));
+
+                youPerson.showInfoWindow();
+
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
                 googleMap.animateCamera(cameraUpdate);
+
+                googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+                    @Override
+                    public void onCameraMove() {
+
+                    }
+                });
+
+                googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+
+                    }
+                });
+
                 mapView.onResume();
-                watchLocation();
+//                watchLocation();
+
 
             }
         });
@@ -206,58 +254,30 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
                 googleMap.animateCamera(cameraUpdate);
-                name_location.setText(serviceLocation.getAddress(location.getLatitude(), location.getLongitude()));
             }
         };
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.perfil:
-                Intent perfil = new Intent(this, Perfil.class);
-                startActivityForResult(perfil, 2002);
-                break;
-
-            case R.id.calls:
-                Intent calls = new Intent(this, Requests_Services.class);
-                startActivity(calls);
-                break;
-
-            case R.id.exit: {
-                builder.setTitle(R.string.app_name);
-                builder.setMessage(R.string.info_exit_app);
-                builder.setCancelable(false);
-                builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        PreLoads.open(Principal.this, null, "Saindo...", false);
-                        serviceLogin.logout(sharedPreferences.getInt("id", 0));
-                    }
-                });
-                builder.setNegativeButton("Não", null);
-                builder.create().show();
-                break;
-            }
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.image_menu:
-                drawerLayout.openDrawer(GravityCompat.START);
+
+            case R.id.item_person_perfil:
+                startActivityForResult(new Intent(this, Perfil.class), 2002);
+                break;
+            case R.id.item_my_location:
+                localeProfile();
+                break;
+            case R.id.item_police_open:
+                openAttendence(0);
                 break;
 
-            case R.id.item_service_emergency:
-                Intent intent = new Intent(this, Services_Emergency.class);
-                startActivityForResult(intent, 2001);
+            case R.id.item_ambulance_open:
+                openAttendence(1);
                 break;
 
-            case R.id.button_send_service:
+            case R.id.item_firetruck_open:
+                openAttendence(2);
                 break;
         }
     }
@@ -267,60 +287,40 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         finish();
     }
 
+    private void openAttendence(int type){
+        builder = new AlertDialog.Builder(this, R.style.CustomDialog);
+        View view = getLayoutInflater().inflate(R.layout.view_attendence, null);
+        builder.setView(view);
+        builder.setCancelable(true);
+        alertDialog = builder.create();
+        alertDialog.show();
+
+        TextView name_item_attendence = view.findViewById(R.id.name_item_attendence);
+
+        RecyclerView list_filter_attendence = view.findViewById(R.id.list_filter_attendence);
+        list_filter_attendence.setLayoutManager(new LinearLayoutManager(this));
+        list_filter_attendence.setHasFixedSize(true);
+        list_filter_attendence.setNestedScrollingEnabled(false);
+
+        switch (type){
+            case 0:
+                name_item_attendence.setText(R.string.label_police_tab);
+                break;
+            case 1:
+                name_item_attendence.setText(R.string.label_samu_tab);
+                break;
+            case 2:
+                name_item_attendence.setText(R.string.label_fireman_tab);
+                break;
+        }
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
-            case 2001:
-                if(resultCode == Activity.RESULT_OK){
-
-                    Animation animation = new TranslateAnimation(0,0,1000,0);
-                    animation.setDuration(1000);
-                    animation.setFillEnabled(true);
-
-                    int TypeService = data.getExtras().getInt("type_service");
-                    int ImageService = data.getExtras().getInt("image_service");
-                    String NameService = data.getExtras().getString("name_service");
-                    image_service.setImageDrawable(getResources().getDrawable(ImageService));
-                    name_service.setText(NameService);
-                    name_service.setTextColor(getResources().getColor(R.color.colorPrimary));
-                    item_location_service.setVisibility(View.VISIBLE);
-                    name_location.setText(serviceLocation.getAddress(Latitude, Longitude));
-
-                    button_send_service.setVisibility(View.VISIBLE);
-                    button_send_service.setAnimation(animation);
-                    animation.start();
-
-                    switch (TypeService){
-                        case 1:
-                            button_send_service.setText("Chamar Polícia");
-                            break;
-                        case 2:
-                            button_send_service.setText("Chamar Samu");
-                            break;
-                        case 3:
-                            button_send_service.setText("Chamar Bombeiros");
-                            break;
-                        default:
-                            button_send_service.setText("Socorro");
-                            break;
-                    }
-
-
-                }else{
-                    image_service.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio));
-                    name_service.setText(R.string.info_box_service);
-                    name_service.setTextColor(getResources().getColor(R.color.colorGray));
-                    item_location_service.setVisibility(View.GONE);
-
-                    button_send_service.setVisibility(View.GONE);
-                    button_send_service.setText("Socorro");
-                }
-                break;
-
             case 2002:
-                if(resultCode == Activity.RESULT_OK){
-                    Toast.makeText(this, R.string.info_ok_save_perfil, Toast.LENGTH_SHORT).show();
-                }
+                localeProfile();
                 break;
 
             case 1010:

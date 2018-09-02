@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.CountDownTimer;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.simples.acesso.API.API;
 import com.simples.acesso.R;
+import com.simples.acesso.Utils.LoadingView;
 import com.simples.acesso.Utils.MaskCellPhone;
 import com.simples.acesso.Utils.PreLoads;
 import com.simples.acesso.Views.Principal;
@@ -32,12 +34,17 @@ public class Service_Login {
         this.editor = activity.getSharedPreferences("profile", Context.MODE_PRIVATE).edit();
     }
 
-    public void check_cellphone (String cellphone){
-
-        Intent intent = new Intent(activity, VerificationSMS.class);
-        intent.putExtra("cellphone", cellphone);
-        activity.startActivity(intent);
-
+    public void check_cellphone (final String cellphone){
+        LoadingView.open(activity, "Verificando");
+        new CountDownTimer(4000, 1000) {
+            public void onTick(long millisUntilFinished) {}
+            public void onFinish() {
+                Intent intent = new Intent(activity, VerificationSMS.class);
+                intent.putExtra("cellphone", cellphone);
+                activity.startActivity(intent);
+                LoadingView.close();
+            }
+        }.start();
     }
 
     public void login (final String cellphone, final String password){

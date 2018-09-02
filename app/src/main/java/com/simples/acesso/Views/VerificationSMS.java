@@ -22,6 +22,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.simples.acesso.FireBase.PhoneNumberSMS.CallBackPhoneNumberValid;
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Login;
+import com.simples.acesso.Utils.LoadingView;
 
 import java.util.concurrent.TimeUnit;
 
@@ -136,19 +137,15 @@ public class VerificationSMS extends AppCompatActivity implements View.OnClickLi
                 }else{
                     layout_code_sms.setErrorEnabled(false);
                     layout_code_sms.setError(null);
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialog);
-                    View loading = getLayoutInflater().inflate(R.layout.view_loading, null);
-                    builder.setView(loading);
-                    builder.setCancelable(false);
-                    final AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                    TextView info_loading = loading.findViewById(R.id.info_loading);
-                    info_loading.setText("Validando Código SMS");
+                    LoadingView.open(this, "Validando");
                     new CountDownTimer(4000, 1000) {
                         public void onTick(long millisUntilFinished) {}
                         public void onFinish() {
-                            startActivity(new Intent(VerificationSMS.this, Principal.class));
+                            Intent intent = new Intent(VerificationSMS.this, Principal.class);
+                            intent.putExtra("cellphone", cellphone);
+                            startActivity(intent);
                             finishAffinity();
+                            LoadingView.close();
                         }
                     }.start();
                 }

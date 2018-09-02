@@ -22,4 +22,11 @@
     <string name="info_error_code_sms">Código inválido</string>
     <string name="info_login_label">Qual seu número de telefone?</string>
     <string name="info_label2_login">Informe seu número de telefone com o DDD para prosseguir</string>
+    <string name="label_police_tab">Polícia</string>
+    <string name="label_samu_tab">Samu</string>
+    <string name="label_fireman_tab">Bombeiros</string>
+    <string name="label_perfil_tab">Perfil</string>
+    <string name="info_attendence">Qual sua emergência?</string>
+
+
 </resources>
