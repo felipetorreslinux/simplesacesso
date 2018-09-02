@@ -28,7 +28,7 @@ public class Service_Location {
 
     public Service_Location(Activity activity){
         this.activity = activity;
-        this.editor = activity.getSharedPreferences("attendence", Context.MODE_PRIVATE).edit();
+        this.editor = activity.getSharedPreferences("attendance", Context.MODE_PRIVATE).edit();
     }
 
     public String getAddress(double lat, double lng) {
@@ -46,7 +46,35 @@ public class Service_Location {
             return local;
         } catch (IOException e) {
             return null;
+        } catch (NullPointerException e){
+            return null;
         }
+    }
+
+    public void getPlaceAdress (String text){
+        AndroidNetworking.get("https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="+text+"&inputtype=textquery&fields=formatted_address,name,geometry&key=AIzaSyAfR29suxxy_ZWoiwkfpFNb2qGTCwWMIiE")
+            .build()
+            .getAsJSONObject(new JSONObjectRequestListener() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try{
+                        String status = response.getString("status");
+                        switch (status){
+                            case "OK":
+                                JSONArray array = response.getJSONArray("candidates");
+                                break;
+                            default:
+
+                                break;
+                        }
+                    }catch (JSONException e){}
+                }
+
+                @Override
+                public void onError(ANError anError) {
+
+                }
+            });
     }
 
     public void listAttendence(){

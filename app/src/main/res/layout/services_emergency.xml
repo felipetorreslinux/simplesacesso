@@ -14,88 +14,75 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-    <LinearLayout
-        android:id="@+id/item_sercive_police"
-        android:orientation="horizontal"
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ripple_white"
-        android:clickable="true"
-        android:padding="16dp"
-        android:layout_marginBottom="1dp">
+        android:text="@string/info_label_local_user"
+        android:padding="10dp"/>
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_police_car_with_light"
-            android:tint="@color/colorPrimary"
-            android:layout_marginRight="16dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="16dp"
-            android:fontFamily="@font/roboto"
-            android:text="Polícia"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/item_sercive_ambulance"
-        android:orientation="horizontal"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ripple_white"
-        android:clickable="true"
-        android:padding="16dp"
-        android:layout_marginBottom="1dp">
+        android:layout_marginHorizontal="10dp"
+        app:contentPadding="5dp">
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_ambulace"
-            android:tint="@color/colorPrimary"
-            android:layout_marginRight="16dp"/>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="16dp"
-            android:fontFamily="@font/roboto"
-            android:text="Samu"/>
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/local_user_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="10dp"
+                    android:textSize="16dp"
+                    android:fontFamily="@font/roboto"/>
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/edit_local_service"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/label_edit_local_user"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16dp"
+                    android:layout_gravity="center"/>
 
-    <LinearLayout
-        android:id="@+id/item_sercive_fireman"
-        android:orientation="horizontal"
+            </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:background="@color/colorGrayLight"/>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ripple_white"
-        android:clickable="true"
-        android:padding="16dp"
-        android:layout_marginBottom="1dp">
+        android:paddingHorizontal="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/info_service_emergency"
+        android:textSize="16dp"/>
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_fire_truck"
-            android:tint="@color/colorPrimary"
-            android:layout_marginRight="16dp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <TextView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_services"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="16dp"
-            android:fontFamily="@font/roboto"
-            android:text="Bombeiros"/>
+            android:layout_height="match_parent"
+            android:paddingHorizontal="10dp"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

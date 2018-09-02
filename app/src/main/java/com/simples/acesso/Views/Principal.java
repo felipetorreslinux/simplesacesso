@@ -48,13 +48,25 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.simples.acesso.Adapters.Adapter_Attendance;
 import com.simples.acesso.Adapters.Adapter_InfoWindow;
+import com.simples.acesso.Models.Attendance_Model;
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Location;
 import com.simples.acesso.Services.Service_Login;
+import com.simples.acesso.Utils.LoadingView;
 import com.simples.acesso.Utils.PreLoads;
 import com.simples.acesso.Utils.ValidGPS;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -65,12 +77,14 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     Service_Login serviceLogin;
     SharedPreferences sharedPreferences;
 
-    LinearLayout item_police_open;
-    LinearLayout item_ambulance_open;
-    LinearLayout item_firetruck_open;
+    ImageView item_police_open;
+    ImageView item_ambulance_open;
+    ImageView item_firetruck_open;
 
     ImageView item_person_perfil;
     ImageView item_my_location;
+
+    TextView location_info;
 
     MapView mapView;
     Marker youPerson;
@@ -119,6 +133,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
+        location_info = findViewById(R.id.location_info);
 
         item_police_open = findViewById(R.id.item_police_open);
         item_ambulance_open = findViewById(R.id.item_ambulance_open);
@@ -196,55 +211,57 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void mapReady(final Location location){
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public void onMapReady(final GoogleMap googleMap) {
+        try {
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(final GoogleMap googleMap) {
+                    location_info.setText("Carregando sua\nlocalização");
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    googleMap.getUiSettings().setMapToolbarEnabled(false);
+                    googleMap.setBuildingsEnabled(true);
+                    googleMap.setIndoorEnabled(true);
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style));
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+                    googleMap.animateCamera(cameraUpdate);
 
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+                        @Override
+                        public void onCameraIdle() {
+                            double CameraLat = googleMap.getCameraPosition().target.latitude;
+                            double CameraLong = googleMap.getCameraPosition().target.longitude;
+                            if(serviceLocation.getAddress(CameraLat,CameraLong) != null){
+                                location_info.setText(serviceLocation.getAddress(CameraLat,CameraLong));
+                            }else{
+                                location_info.setText(R.string.info_not_location);
+                            }
 
-                if(youPerson != null){
-                    youPerson.remove();
+                        }
+                    });
+
+                    googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+                        @Override
+                        public void onCameraMove() {
+                            location_info.setText("Carregando\nlocalização");
+                        }
+                    });
+
+                    googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                        @Override
+                        public void onMapLoaded() {
+                            location_info.setText(serviceLocation.getAddress(location.getLatitude(), location.getLongitude()));
+                        }
+                    });
+
+                    mapView.onResume();
+                    watchLocation();
+
                 }
+            });
+        }catch (NullPointerException e) {
 
-                youPerson = googleMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .flat(false)
-                        .draggable(false));
-
-                googleMap.getUiSettings().setMapToolbarEnabled(false);
-                googleMap.setBuildingsEnabled(true);
-                googleMap.setIndoorEnabled(true);
-                googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style));
-
-                googleMap.setInfoWindowAdapter(new Adapter_InfoWindow(Principal.this, location.getLatitude(), location.getLongitude()));
-
-                youPerson.showInfoWindow();
-
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
-                googleMap.animateCamera(cameraUpdate);
-
-                googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
-                    @Override
-                    public void onCameraMove() {
-
-                    }
-                });
-
-                googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                    @Override
-                    public void onInfoWindowClick(Marker marker) {
-
-                    }
-                });
-
-                mapView.onResume();
-//                watchLocation();
-
-
-            }
-        });
+        }
     }
 
     private void watchLocation() {
@@ -256,6 +273,29 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 googleMap.animateCamera(cameraUpdate);
             }
         };
+    }
+
+    private void openAttendence(int type){
+        switch (type){
+            case 0:
+                Intent police = new Intent(this, Services_Emergency.class);
+                police.putExtra("type_service", 1);
+                police.putExtra("local_user", serviceLocation.getAddress(Latitude, Longitude));
+                startActivityForResult(police,1010);
+                break;
+            case 1:
+                Intent ambulance = new Intent(this, Services_Emergency.class);
+                ambulance.putExtra("type_service", 2);
+                ambulance.putExtra("local_user", serviceLocation.getAddress(Latitude, Longitude));
+                startActivityForResult(ambulance,1010);
+                break;
+            case 2:
+                Intent fireman = new Intent(this, Services_Emergency.class);
+                fireman.putExtra("type_service", 3);
+                fireman.putExtra("local_user", serviceLocation.getAddress(Latitude, Longitude));
+                startActivityForResult(fireman,1010);
+                break;
+        }
     }
 
     @Override
@@ -287,35 +327,6 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         finish();
     }
 
-    private void openAttendence(int type){
-        builder = new AlertDialog.Builder(this, R.style.CustomDialog);
-        View view = getLayoutInflater().inflate(R.layout.view_attendence, null);
-        builder.setView(view);
-        builder.setCancelable(true);
-        alertDialog = builder.create();
-        alertDialog.show();
-
-        TextView name_item_attendence = view.findViewById(R.id.name_item_attendence);
-
-        RecyclerView list_filter_attendence = view.findViewById(R.id.list_filter_attendence);
-        list_filter_attendence.setLayoutManager(new LinearLayoutManager(this));
-        list_filter_attendence.setHasFixedSize(true);
-        list_filter_attendence.setNestedScrollingEnabled(false);
-
-        switch (type){
-            case 0:
-                name_item_attendence.setText(R.string.label_police_tab);
-                break;
-            case 1:
-                name_item_attendence.setText(R.string.label_samu_tab);
-                break;
-            case 2:
-                name_item_attendence.setText(R.string.label_fireman_tab);
-                break;
-        }
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
@@ -324,7 +335,6 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 break;
 
             case 1010:
-                builder.create().dismiss();
                 localeProfile();
                 break;
         }

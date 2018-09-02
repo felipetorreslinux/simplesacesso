@@ -27,6 +27,14 @@
     <string name="label_fireman_tab">Bombeiros</string>
     <string name="label_perfil_tab">Perfil</string>
     <string name="info_attendence">Qual sua emergência?</string>
+    <string name="send_police">Chamar Policia</string>
+    <string name="send_samu">Chamar Samu</string>
+    <string name="send_fireman">Chamar Bombeiros</string>
+    <string name="info_label_local_user">Você está em</string>
+    <string name="label_edit_local_user">Alterar</string>
+    <string name="info_service_emergency">Qual tipo de sua emergência?</string>
+    <string name="title_search_place">Buscar</string>
+    <string name="info_not_location">Localização não encontrada</string>
 
 
 </resources>
