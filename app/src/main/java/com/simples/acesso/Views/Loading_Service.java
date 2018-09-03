@@ -31,7 +31,7 @@ public class Loading_Service extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 long time = millisUntilFinished / 1000;
-                text_service_send.setText(getIntent().getExtras().getString("service_send")+"\n\n"+String.valueOf(time)+"segs");
+                text_service_send.setText(getIntent().getExtras().getString("service_send")+"\n\n"+String.valueOf(time));
             }
 
             @Override
