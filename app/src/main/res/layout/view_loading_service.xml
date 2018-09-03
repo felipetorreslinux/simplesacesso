@@ -25,4 +25,16 @@
         android:paddingVertical="5dp"
         android:layout_centerInParent="true"/>
 
+    <Button
+        android:id="@+id/button_send_service"
+        android:layout_below="@id/animation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ripple_blue"
+        android:textColor="@color/colorWhite"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="10dp"
+        android:layout_marginTop="50dp"/>
+
 </RelativeLayout>

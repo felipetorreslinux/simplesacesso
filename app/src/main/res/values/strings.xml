@@ -39,5 +39,13 @@
     <string name="search_title">Pesquisar</string>
     <string name="hint_search_place">Digite aqui...</string>
     <string name="label_button_service_emergency">Chamar</string>
+    <string name="item_edit_profile">Minhas informações</string>
+    <string name="item_solicitacoes_profile">Solicitações</string>
+    <string name="item_termos_profile">Termos e Privacidade</string>
+    <string name="item_config_profile">Configurações</string>
+    <string name="item_sair_profile">Sair</string>
+    <string name="item_hospital_profile">Hospitais</string>
+    <string name="item_delegacia_profile">Delegacias</string>
+    <string name="title_hospitals">Hospitais</string>
 
 </resources>

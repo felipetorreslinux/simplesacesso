@@ -171,7 +171,7 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
 
             case R.id.button_service_emergency:
                 Intent intent = new Intent(this, Loading_Service.class);
-                intent.putExtra("service_send", "Solicitando\n"+NAME_SERVICE);
+                intent.putExtra("service_send", "Chamando\n"+NAME_SERVICE);
                 startActivity(intent);
                 break;
 

@@ -27,10 +27,10 @@
 
         <ImageView
             android:id="@+id/item_person_perfil"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="30dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="36dp"
             android:background="@drawable/icon_person"
             android:clickable="true"
             android:elevation="4dp"

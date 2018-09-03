@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,6 +74,10 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
 
     Service_Perfil servicePerfil;
 
+    String cpf;
+
+    LinearLayout item_hospital_profile;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,8 +95,11 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
         image_profile = findViewById(R.id.image_profile);
         image_profile.setOnClickListener(this);
 
+        cpf = sharedPreferences.getString("document", "");
         name_profile = findViewById(R.id.name_profile);
+        name_profile.setText(sharedPreferences.getString("name", "Felipe Torres"));
         cellphone_profile = findViewById(R.id.cellphone_profile);
+        cellphone_profile.setText(sharedPreferences.getString("cellphone", "(81) 99605-02089"));
 
         if(sharedPreferences.getString("image", "").isEmpty()){
             Picasso.get()
@@ -106,6 +114,9 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
                     .resize(200,200)
                     .into(image_profile);
         }
+
+        item_hospital_profile = findViewById(R.id.item_hospital_profile);
+        item_hospital_profile.setOnClickListener(this);
     }
 
     private void createToolbar(Toolbar toolbar) {
@@ -133,6 +144,9 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
         switch (v.getId()){
             case R.id.image_profile:
                 chooseImage();
+                break;
+            case R.id.item_hospital_profile:
+                startActivity(new Intent(this, Hospitals.class));
                 break;
         }
     }
@@ -187,7 +201,7 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
             progressDialog.setMax(100);
             progressDialog.show();
 
-            final StorageReference ref = storageReference.child("images/04357023432.jpg");
+            final StorageReference ref = storageReference.child("images/"+cpf+".jpg");
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override

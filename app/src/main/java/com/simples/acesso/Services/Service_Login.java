@@ -36,7 +36,7 @@ public class Service_Login {
 
     public void check_cellphone (final String cellphone){
         LoadingView.open(activity, "Verificando");
-        new CountDownTimer(4000, 1000) {
+        new CountDownTimer(2000, 1000) {
             public void onTick(long millisUntilFinished) {}
             public void onFinish() {
                 Intent intent = new Intent(activity, VerificationSMS.class);

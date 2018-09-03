@@ -16,7 +16,9 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.simples.acesso.API.API;
+import com.simples.acesso.Adapters.Adapter_Hospitais;
 import com.simples.acesso.Adapters.Adapter_SearchPlace;
+import com.simples.acesso.Models.Hospitais_Model;
 import com.simples.acesso.Models.SearchPlace_Model;
 
 import org.json.JSONArray;
@@ -24,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -99,6 +102,44 @@ public class Service_Location {
 
                 }
             });
+    }
+
+    public void getHospital (final double lat, double lng, final RecyclerView recyclerView){
+        AndroidNetworking.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+lng+"&radius=5000&type=hospital&key=AIzaSyAfR29suxxy_ZWoiwkfpFNb2qGTCwWMIiE")
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            String status = response.getString("status");
+                            switch (status){
+                                case "OK":
+                                    JSONArray array = response.getJSONArray("results");
+                                    List<Hospitais_Model> list = new ArrayList<Hospitais_Model>();
+                                    list.clear();
+                                    if(array.length() > 0){
+                                        for(int i = 0; i < array.length(); i++){
+                                            JSONObject jsonObject = array.getJSONObject(i);
+                                            String name = jsonObject.getString("name");
+                                            Hospitais_Model hospitais_model = new Hospitais_Model(name);
+                                            list.add(hospitais_model);
+                                        }
+                                        Adapter_Hospitais adapter_hospitais = new Adapter_Hospitais(activity, list);
+                                        recyclerView.setAdapter(adapter_hospitais);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                    }else{
+                                        recyclerView.setVisibility(View.GONE);
+                                    }
+                                    break;
+                            }
+                        }catch (JSONException e){}
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+
+                    }
+                });
     }
 
     public void listAttendence(){

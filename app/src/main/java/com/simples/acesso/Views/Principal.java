@@ -79,6 +79,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     AlertDialog alertDialog;
     Service_Login serviceLogin;
     SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     ImageView item_person_perfil;
     ImageView item_my_location;
@@ -104,6 +105,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         setContentView(R.layout.principal);
 
         sharedPreferences = getSharedPreferences("profile", MODE_PRIVATE);
+        editor = getSharedPreferences("profile", MODE_PRIVATE).edit();
         serviceLogin = new Service_Login(this);
         serviceLocation = new Service_Location(this);
         serviceLocation.listAttendence();
@@ -251,6 +253,9 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                         public void onMapLoaded() {
                             location_info.setText(serviceLocation.getAddress(location.getLatitude(), location.getLongitude()));
                             item_my_location.setVisibility(View.GONE);
+                            editor.putString("lat", String.valueOf(location.getLatitude()));
+                            editor.putString("lng", String.valueOf(location.getLongitude()));
+                            editor.commit();
                         }
                     });
 
