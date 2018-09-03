@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -119,7 +120,6 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
 
         location_info = findViewById(R.id.location_info);
 
-        imageProfile();
         openAttendence();
         localeProfile();
     }
@@ -128,6 +128,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     protected void onResume() {
         super.onResume();
 //        validDocument();
+        imageProfile();
     }
 
     private void validDocument() {
@@ -158,14 +159,14 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         item_person_perfil.setOnClickListener(this);
 
         if(sharedPreferences.getString("image", "").isEmpty()){
-            Picasso.with(this)
+            Picasso.get()
                     .load(R.drawable.no_image)
                     .transform(new CropCircleTransformation())
                     .resize(200,200)
                     .into(item_person_perfil);
         }else{
-            Picasso.with(this)
-                    .load(sharedPreferences.getString("image", ""))
+            Picasso.get()
+                    .load(Uri.parse(sharedPreferences.getString("image", "")))
                     .transform(new CropCircleTransformation())
                     .resize(200,200)
                     .into(item_person_perfil);
