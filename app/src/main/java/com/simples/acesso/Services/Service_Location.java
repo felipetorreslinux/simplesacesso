@@ -6,12 +6,18 @@ import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.simples.acesso.API.API;
+import com.simples.acesso.Adapters.Adapter_SearchPlace;
+import com.simples.acesso.Models.SearchPlace_Model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,7 +57,7 @@ public class Service_Location {
         }
     }
 
-    public void getPlaceAdress (String text){
+    public void getPlaceAdress (String text, final List<SearchPlace_Model> list, final RecyclerView recyclerView, final ProgressBar progress_search){
         AndroidNetworking.get("https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="+text+"&inputtype=textquery&fields=formatted_address,name,geometry&key=AIzaSyAfR29suxxy_ZWoiwkfpFNb2qGTCwWMIiE")
             .build()
             .getAsJSONObject(new JSONObjectRequestListener() {
@@ -62,6 +68,24 @@ public class Service_Location {
                         switch (status){
                             case "OK":
                                 JSONArray array = response.getJSONArray("candidates");
+                                if(array.length() > 0){
+                                    list.clear();
+                                    for(int i = 0; i < array.length(); i++){
+                                        JSONObject jsonObject = array.getJSONObject(i);
+                                        SearchPlace_Model searchPlaceModel = new SearchPlace_Model(
+                                                i,
+                                                jsonObject.getString("formatted_address"),
+                                                jsonObject.getJSONObject("geometry").getJSONObject("location").getDouble("lat"),
+                                                jsonObject.getJSONObject("geometry").getJSONObject("location").getDouble("lng"),
+                                                jsonObject.getString("name"));
+                                        list.add(searchPlaceModel);
+                                    }
+                                    Adapter_SearchPlace adapterSearchPlace = new Adapter_SearchPlace(activity, list);
+                                    recyclerView.setAdapter(adapterSearchPlace);
+                                    progress_search.setVisibility(View.GONE);
+                                }else{
+                                    progress_search.setVisibility(View.VISIBLE);
+                                }
                                 break;
                             default:
 
@@ -78,7 +102,7 @@ public class Service_Location {
     }
 
     public void listAttendence(){
-        AndroidNetworking.get(API.URL_DEV+"Modules/AttendanceFilter.php")
+        AndroidNetworking.get(API.URL_DEV+"Modules/Attendance_Filter.php")
             .build()
             .getAsJSONObject(new JSONObjectRequestListener() {
                 @Override

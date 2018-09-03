@@ -110,24 +110,8 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         builder = new AlertDialog.Builder(this);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        item_person_perfil = findViewById(R.id.item_person_perfil);
-        item_person_perfil.setOnClickListener(this);
-
-        if(sharedPreferences.getString("image", "").isEmpty()){
-            Picasso.with(this)
-                    .load(R.drawable.no_image)
-                    .transform(new CropCircleTransformation())
-                    .resize(200,200)
-                    .into(item_person_perfil);
-        }else{
-            Picasso.with(this)
-                    .load(sharedPreferences.getString("image", ""))
-                    .transform(new CropCircleTransformation())
-                    .resize(200,200)
-                    .into(item_person_perfil);
-        }
-
         item_my_location = findViewById(R.id.item_my_location);
+        item_my_location.setVisibility(View.GONE);
         item_my_location.setOnClickListener(this);
 
         mapView = findViewById(R.id.mapView);
@@ -135,14 +119,15 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
 
         location_info = findViewById(R.id.location_info);
 
+        imageProfile();
         openAttendence();
+        localeProfile();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 //        validDocument();
-        localeProfile();
     }
 
     private void validDocument() {
@@ -165,6 +150,25 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
             } else {
                 localeProfile();
             }
+        }
+    }
+
+    private void imageProfile() {
+        item_person_perfil = findViewById(R.id.item_person_perfil);
+        item_person_perfil.setOnClickListener(this);
+
+        if(sharedPreferences.getString("image", "").isEmpty()){
+            Picasso.with(this)
+                    .load(R.drawable.no_image)
+                    .transform(new CropCircleTransformation())
+                    .resize(200,200)
+                    .into(item_person_perfil);
+        }else{
+            Picasso.with(this)
+                    .load(sharedPreferences.getString("image", ""))
+                    .transform(new CropCircleTransformation())
+                    .resize(200,200)
+                    .into(item_person_perfil);
         }
     }
 
@@ -226,6 +230,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                             double CameraLong = googleMap.getCameraPosition().target.longitude;
                             if(serviceLocation.getAddress(CameraLat,CameraLong) != null){
                                 location_info.setText(serviceLocation.getAddress(CameraLat,CameraLong));
+                                item_my_location.setVisibility(View.VISIBLE);
                             }else{
                                 location_info.setText(R.string.info_not_location);
                             }
@@ -244,12 +249,12 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                         @Override
                         public void onMapLoaded() {
                             location_info.setText(serviceLocation.getAddress(location.getLatitude(), location.getLongitude()));
+                            item_my_location.setVisibility(View.GONE);
                         }
                     });
 
                     mapView.onResume();
-                    watchLocation();
-
+//                    watchLocation();
                 }
             });
         }catch (NullPointerException e) {
@@ -275,24 +280,30 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.item_police:
-                        Intent police = new Intent(Principal.this, Services_Emergency.class);
-                        police.putExtra("type_service", 1);
-                        police.putExtra("local_user", location_info.getText().toString().trim());
-                        startActivityForResult(police,1010);
+
+                            Intent police = new Intent(Principal.this, Services_Emergency.class);
+                            police.putExtra("type_service", 1);
+                            police.putExtra("local_user", location_info.getText().toString().trim());
+                            startActivityForResult(police,1010);
+
                         break;
 
                     case R.id.item_ambulance:
-                        Intent ambulance = new Intent(Principal.this, Services_Emergency.class);
-                        ambulance.putExtra("type_service", 2);
-                        ambulance.putExtra("local_user", location_info.getText().toString().trim());
-                        startActivityForResult(ambulance,1010);
+
+                            Intent ambulance = new Intent(Principal.this, Services_Emergency.class);
+                            ambulance.putExtra("type_service", 2);
+                            ambulance.putExtra("local_user", location_info.getText().toString().trim());
+                            startActivityForResult(ambulance,1010);
+
                         break;
 
                     case R.id.item_fireman:
-                        Intent fireman = new Intent(Principal.this, Services_Emergency.class);
-                        fireman.putExtra("type_service", 3);
-                        fireman.putExtra("local_user", location_info.getText().toString().trim());
-                        startActivityForResult(fireman,1010);
+
+                            Intent fireman = new Intent(Principal.this, Services_Emergency.class);
+                            fireman.putExtra("type_service", 3);
+                            fireman.putExtra("local_user", location_info.getText().toString().trim());
+                            startActivityForResult(fireman, 1010);
+
                         break;
                 }
                 return false;
@@ -326,7 +337,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 break;
 
             case 1010:
-                localeProfile();
+
                 break;
         }
     }

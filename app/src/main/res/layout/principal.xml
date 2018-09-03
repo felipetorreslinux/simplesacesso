@@ -15,14 +15,15 @@
             android:id="@+id/item_my_location"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="30dp"
+            android:layout_above="@+id/bottom_bar_itens_principal"
+            android:layout_margin="16dp"
             android:background="@drawable/icon_person"
             android:clickable="true"
             android:elevation="4dp"
             android:padding="12.5dp"
-            android:src="@drawable/ic_my_location" />
+            android:src="@drawable/ic_my_location"
+            android:layout_marginRight="13dp"
+            android:layout_alignParentRight="true" />
 
         <ImageView
             android:id="@+id/item_person_perfil"

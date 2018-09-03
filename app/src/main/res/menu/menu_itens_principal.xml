@@ -7,7 +7,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/item_police"
-            android:checked="true"
+            android:checked="false"
             android:icon="@drawable/ic_police_car_with_light"
             android:title="@string/label_police_tab" />
         <item
@@ -17,7 +17,7 @@
             android:title="@string/label_samu_tab" />
         <item
             android:id="@+id/item_fireman"
-            android:checked="true"
+            android:checked="false"
             android:icon="@drawable/ic_fire_truck"
             android:title="@string/label_fireman_tab" />
     </group>

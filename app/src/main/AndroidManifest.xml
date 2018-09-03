@@ -56,7 +56,8 @@
             android:theme="@style/Principal"/>
 
         <activity android:name=".Views.Search_Place"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/SearchPlace"/>
 
         <activity android:name=".Views.Services_Emergency"
             android:screenOrientation="portrait"/>
@@ -67,6 +68,10 @@
 
         <activity android:name=".Views.Requests_Services"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".Views.Loading_Service"
+            android:screenOrientation="portrait"
+            android:theme="@style/Principal"/>
 
 
     </application>

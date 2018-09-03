@@ -22,19 +22,22 @@
     <string name="info_error_code_sms">Código inválido</string>
     <string name="info_login_label">Qual seu número de telefone?</string>
     <string name="info_label2_login">Informe seu número de telefone com o DDD para prosseguir</string>
-    <string name="label_police_tab">Polícia</string>
-    <string name="label_samu_tab">Samu</string>
-    <string name="label_fireman_tab">Bombeiros</string>
+    <string name="label_police_tab">POLÍCIA</string>
+    <string name="label_samu_tab">SAMU</string>
+    <string name="label_fireman_tab">BOMBEIROS</string>
     <string name="label_perfil_tab">Perfil</string>
     <string name="info_attendence">Qual sua emergência?</string>
-    <string name="send_police">Chamar Policia</string>
-    <string name="send_samu">Chamar Samu</string>
-    <string name="send_fireman">Chamar Bombeiros</string>
+    <string name="send_police">POLÍCIA</string>
+    <string name="send_samu">SAMU</string>
+    <string name="send_fireman">BOMBEIROS</string>
     <string name="info_label_local_user">Você está em</string>
     <string name="label_edit_local_user">Alterar</string>
     <string name="info_service_emergency">Qual tipo de sua emergência?</string>
     <string name="title_search_place">Buscar</string>
     <string name="info_not_location">Localização não encontrada</string>
-
+    <string name="info_load_local_user">Aguarde...\\nCarregando sua localização</string>
+    <string name="search_title">Pesquisar</string>
+    <string name="hint_search_place">Digite aqui...</string>
+    <string name="label_button_service_emergency">Chamar</string>
 
 </resources>

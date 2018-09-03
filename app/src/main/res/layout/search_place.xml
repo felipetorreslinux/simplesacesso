@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:weightSum="1">
+
+        <ImageView
+            android:layout_width="56dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_back_white"
+            android:layout_gravity="center"
+            android:padding="15.5dp"/>
+
+        <EditText
+            android:id="@+id/text_search"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:background="@android:color/transparent"
+            android:layout_marginHorizontal="10dp"
+            android:hint="@string/hint_search_place"
+            android:textSize="18dp"
+            android:inputType="textAutoComplete"
+            android:imeOptions="actionDone"
+            android:textColorHint="@color/colorWhiteLight"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_search"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/colorBlack"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

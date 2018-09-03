@@ -29,6 +29,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Services_Emergency extends AppCompatActivity implements View.OnClickListener {
@@ -43,6 +45,8 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
     TextView edit_local_service;
 
     RecyclerView list_services;
+
+    Button button_service_emergency;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +73,14 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
 
         listServices();
 
+        button_service_emergency = findViewById(R.id.button_service_emergency);
+        button_service_emergency.setOnClickListener(this);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void listServices() {
@@ -107,6 +119,7 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
 
     @SuppressLint("NewApi")
     private void createToolbar(Toolbar toolbar) {
+
         Drawable backIconActionBar = getResources().getDrawable(R.drawable.ic_back_white);
         toolbar = (Toolbar) findViewById(R.id.toolbar_service_emergency);
         setSupportActionBar(toolbar);
@@ -116,24 +129,19 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
 
         TYPE_SERVICE = getIntent().getExtras().getInt("type_service");
         LOCAL_USER = getIntent().getExtras().getString("local_user");
+
         local_user_service = findViewById(R.id.local_user_service);
         local_user_service.setText(LOCAL_USER);
 
         switch (TYPE_SERVICE){
             case 1:
                 getSupportActionBar().setTitle(R.string.send_police);
-                toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
                 break;
             case 2:
                 getSupportActionBar().setTitle(R.string.send_samu);
-                toolbar.setBackgroundColor(getResources().getColor(R.color.colorRed));
-                getWindow().setStatusBarColor(getResources().getColor(R.color.colorRed));
                 break;
             case 3:
                 getSupportActionBar().setTitle(R.string.send_fireman);
-                toolbar.setBackgroundColor(getResources().getColor(R.color.colorOrange));
-                getWindow().setStatusBarColor(getResources().getColor(R.color.colorOrange));
                 break;
         }
     }
@@ -157,6 +165,12 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
                 startActivityForResult(new Intent(this, Search_Place.class), 1000);
                 break;
 
+            case R.id.button_service_emergency:
+                Intent intent = new Intent(this, Loading_Service.class);
+                intent.putExtra("service_send", "Solicitando\nAguarde...");
+                startActivity(intent);
+                break;
+
         }
     }
 
@@ -172,7 +186,7 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
         switch (requestCode){
             case 1000:
                 if(resultCode == Activity.RESULT_OK){
-
+                    local_user_service.setText(data.getExtras().getString("local_user"));
                 }else{
                     createToolbar(toolbar);
                     listServices();
