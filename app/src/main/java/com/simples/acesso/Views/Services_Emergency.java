@@ -38,6 +38,7 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
     SharedPreferences servicos;
     List<Attendance_Model> list = new ArrayList<Attendance_Model>();
     int TYPE_SERVICE;
+    String NAME_SERVICE;
     String LOCAL_USER;
 
     Toolbar toolbar;
@@ -136,12 +137,15 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
         switch (TYPE_SERVICE){
             case 1:
                 getSupportActionBar().setTitle(R.string.send_police);
+                NAME_SERVICE = "POLÍCIA";
                 break;
             case 2:
                 getSupportActionBar().setTitle(R.string.send_samu);
+                NAME_SERVICE = "SAMU";
                 break;
             case 3:
                 getSupportActionBar().setTitle(R.string.send_fireman);
+                NAME_SERVICE = "BOMBEIROS";
                 break;
         }
     }
@@ -167,7 +171,7 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
 
             case R.id.button_service_emergency:
                 Intent intent = new Intent(this, Loading_Service.class);
-                intent.putExtra("service_send", "Solicitando\nAguarde...");
+                intent.putExtra("service_send", "Solicitando\n"+NAME_SERVICE);
                 startActivity(intent);
                 break;
 
