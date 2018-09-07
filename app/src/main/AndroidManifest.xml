@@ -84,6 +84,11 @@
         <activity android:name=".Views.Delegacias"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".Views.Minhas_Informacoes"
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            android:theme="@style/MinhasInformacoes"
+            android:screenOrientation="portrait"/>
+
 
     </application>
 

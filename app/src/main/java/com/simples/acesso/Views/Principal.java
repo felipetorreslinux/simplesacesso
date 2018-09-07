@@ -123,16 +123,12 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         mapView.onCreate(savedInstanceState);
 
         location_info = findViewById(R.id.location_info);
-
-        openAttendence();
-        localeProfile();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        validDocument();
-        imageProfile();
+        validDocument();
     }
 
     private void validDocument() {
@@ -146,13 +142,15 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         builder.create().dismiss();
-                        Intent intent = new Intent(Principal.this, Perfil.class);
+                        Intent intent = new Intent(Principal.this, Minhas_Informacoes.class);
                         startActivity(intent);
                     }
                 });
                 builder.setNegativeButton(null, null);
                 builder.create().show();
             } else {
+                imageProfile();
+                openAttendence();
                 localeProfile();
             }
         }

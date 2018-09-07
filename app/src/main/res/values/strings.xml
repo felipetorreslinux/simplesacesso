@@ -9,7 +9,7 @@
     <string name="info_terms_newaccount">Concordo com os Termos de Uso do Simples Acesso.</string>
     <string name="title_verification_sms">Validação SMS</string>
     <string name="info_exit_app">Deseja realmente sair?</string>
-    <string name="info_update_account">Atualize seu perfil para utilizar todos os nossos serviços</string>
+    <string name="info_update_account">Atualize suas informações para utilizar todos os nossos serviços</string>
     <string name="title_service_emergency">Serviços</string>
     <string name="info_box_service">Quem você deseja chamar?</string>
     <string name="title_perfil">Meu Perfil</string>
@@ -49,5 +49,6 @@
     <string name="title_hospitals">Hospitais</string>
     <string name="loading_text_hospitais">Carregando hospitais mais próximos a você</string>
     <string name="title_delegacias">Delegacias</string>
+    <string name="title_minhas_informacoes">Informações</string>
 
 </resources>

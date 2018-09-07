@@ -51,6 +51,7 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
 
     String cpf;
 
+    LinearLayout item_edit_profile;
     LinearLayout item_hospital_profile;
     LinearLayout item_delegacia_profile;
 
@@ -91,8 +92,10 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
                     .into(image_profile);
         }
 
+        item_edit_profile = findViewById(R.id.item_edit_profile);
         item_hospital_profile = findViewById(R.id.item_hospital_profile);
         item_delegacia_profile = findViewById(R.id.item_delegacia_profile);
+        item_edit_profile.setOnClickListener(this);
         item_hospital_profile.setOnClickListener(this);
         item_delegacia_profile.setOnClickListener(this);
     }
@@ -129,6 +132,10 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
 
             case R.id.item_delegacia_profile:
                 startActivity(new Intent(this, Delegacias.class));
+                break;
+
+            case R.id.item_edit_profile:
+                startActivity(new Intent(this, Minhas_Informacoes.class));
                 break;
         }
     }
