@@ -43,6 +43,8 @@ public class Delegacias extends AppCompatActivity {
         final String lat = sharedPreferences.getString("lat", "");
         final String lng = sharedPreferences.getString("lng", "");
 
+        loading_places = findViewById(R.id.loading_places);
+
         seek_hospital = findViewById(R.id.seek_hospital);
         seek_hospital.setMin(1000);
         seek_hospital.setMax(50000);
@@ -59,7 +61,7 @@ public class Delegacias extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 distancia_seek.setText(seekBar.getProgress()+" km");
                 loading_places.setVisibility(View.VISIBLE);
-                new Service_Location(Delegacias.this).getPlaces(Double.parseDouble(lat), Double.parseDouble(lng),"hospital", String.valueOf(seekBar.getProgress()), recycler_delegacias, loading_places);
+                new Service_Location(Delegacias.this).getPlaces(Double.parseDouble(lat), Double.parseDouble(lng),"police", String.valueOf(seekBar.getProgress()), recycler_delegacias, loading_places);
                 distancia_seek.setText("Distância de "+seek_hospital.getProgress() / 1000+" km de onde você está");
             }
         });
