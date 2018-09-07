@@ -1,36 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
-    android:orientation="vertical"
+    android:orientation="horizontal"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
-    android:layout_marginHorizontal="5dp"
     android:layout_marginVertical="2dp"
-    android:background="@color/colorWhite">
+    android:background="@color/colorWhite"
+    android:weightSum="1">
 
-        <TextView
-            android:id="@+id/name_hospital"
+        <LinearLayout
+            android:layout_weight="1"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textColor="@color/colorBlack"/>
+            android:paddingVertical="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            android:background="@color/colorWhite">
 
-        <TextView
-            android:id="@+id/local_hospital"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textColor="@color/colorBlack"/>
 
-        <TextView
-            android:id="@+id/distancia_hospital"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/local"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/aberto_hospital"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_directions"
+            android:background="@drawable/icon_person"
+            android:padding="10dp"
+            android:elevation="4dp"
+            android:tint="@color/colorPrimary"
+            android:layout_marginHorizontal="10dp"/>
 
 </LinearLayout>
 

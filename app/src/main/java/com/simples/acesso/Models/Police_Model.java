@@ -3,24 +3,20 @@ package com.simples.acesso.Models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Places_Model {
+public class Police_Model {
 
     String id;
     String name;
     String local;
-    double distance;
     double lat;
     double lng;
-    boolean open;
 
-    public Places_Model(JSONObject jsonObject) throws JSONException{
+    public Police_Model(JSONObject jsonObject) throws JSONException{
         this.id = jsonObject.getString("id");
         this.name = jsonObject.getString("name");
         this.local = jsonObject.getString("vicinity");
-        this.distance = jsonObject.getDouble("rating");
         this.lat = jsonObject.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
         this.lng = jsonObject.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
-        this.open = jsonObject.getJSONObject("opening_hours").getBoolean("open_now");
     }
 
     public String getId() {
@@ -47,14 +43,6 @@ public class Places_Model {
         this.local = local;
     }
 
-    public double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
-
     public double getLat() {
         return lat;
     }
@@ -71,11 +59,4 @@ public class Places_Model {
         this.lng = lng;
     }
 
-    public boolean isOpen() {
-        return open;
-    }
-
-    public void setOpen(boolean open) {
-        this.open = open;
-    }
 }

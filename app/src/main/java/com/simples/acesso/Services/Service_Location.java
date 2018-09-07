@@ -15,9 +15,11 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.simples.acesso.API.API;
-import com.simples.acesso.Adapters.Adapter_Places;
+import com.simples.acesso.Adapters.Adapter_Hospitais;
+import com.simples.acesso.Adapters.Adapter_Polices;
 import com.simples.acesso.Adapters.Adapter_SearchPlace;
-import com.simples.acesso.Models.Places_Model;
+import com.simples.acesso.Models.Hospitais_Model;
+import com.simples.acesso.Models.Police_Model;
 import com.simples.acesso.Models.SearchPlace_Model;
 import com.simples.acesso.R;
 
@@ -34,12 +36,10 @@ public class Service_Location {
 
     Activity activity;
     SharedPreferences.Editor editor;
-    ViewStub loading_places;
 
     public Service_Location(Activity activity){
         this.activity = activity;
         this.editor = activity.getSharedPreferences("attendance", Context.MODE_PRIVATE).edit();
-        this.loading_places = activity.findViewById(R.id.loading_places);
     }
 
     public String getAddress(LatLng latLng) {
@@ -99,9 +99,8 @@ public class Service_Location {
             });
     }
 
-    public void getPlaces (final double lat, double lng, final String type, final RecyclerView recyclerView){
-        loading_places.setVisibility(View.VISIBLE);
-        AndroidNetworking.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+lng+"&radius=15000&type="+type+"&key=AIzaSyAfR29suxxy_ZWoiwkfpFNb2qGTCwWMIiE")
+    public void getPlaces (final double lat, double lng, final String type, String progress, final RecyclerView recyclerView, final ViewStub loading_places){
+        AndroidNetworking.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+lng+"&radius="+progress+"&type="+type+"&key=AIzaSyAfR29suxxy_ZWoiwkfpFNb2qGTCwWMIiE")
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
@@ -112,20 +111,34 @@ public class Service_Location {
                                 case "OK":
                                     JSONArray array = response.getJSONArray("results");
                                     if(array.length() > 0){
-                                        List<Places_Model> list = new ArrayList<Places_Model>();
-                                        list.clear();
-                                        for(int i = 0; i < array.length(); i++){
-                                            JSONObject jsonObject = array.getJSONObject(i);
-                                            Places_Model places_model = new Places_Model(jsonObject);
-                                            list.add(places_model);
+                                        switch (type){
+                                            case "hospital":
+                                                List<Hospitais_Model> list_hospitais = new ArrayList<Hospitais_Model>();
+                                                list_hospitais.clear();
+                                                for(int i = 0; i < array.length(); i++){
+                                                    JSONObject jsonObject = array.getJSONObject(i);
+                                                    Hospitais_Model hospitais_model = new Hospitais_Model(jsonObject);
+                                                    list_hospitais.add(hospitais_model);
+                                                }
+                                                Adapter_Hospitais adapter_hospitais = new Adapter_Hospitais(activity, list_hospitais);
+                                                recyclerView.setAdapter(adapter_hospitais);
+                                                recyclerView.setVisibility(View.VISIBLE);
+                                                loading_places.setVisibility(View.GONE);
+                                                break;
+                                            case "police":
+                                                List<Police_Model> list_police = new ArrayList<Police_Model>();
+                                                list_police.clear();
+                                                for(int i = 0; i < array.length(); i++){
+                                                    JSONObject jsonObject = array.getJSONObject(i);
+                                                    Police_Model police = new Police_Model(jsonObject);
+                                                    list_police.add(police);
+                                                }
+                                                Adapter_Polices adapter_places = new Adapter_Polices(activity, list_police);
+                                                recyclerView.setAdapter(adapter_places);
+                                                recyclerView.setVisibility(View.VISIBLE);
+                                                loading_places.setVisibility(View.GONE);
+                                                break;
                                         }
-                                        Adapter_Places adapter_places = new Adapter_Places(activity, list);
-                                        recyclerView.setAdapter(adapter_places);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        loading_places.setVisibility(View.GONE);
-                                    }else{
-                                        recyclerView.setVisibility(View.GONE);
-                                        loading_places.setVisibility(View.VISIBLE);
                                     }
                                     break;
                             }

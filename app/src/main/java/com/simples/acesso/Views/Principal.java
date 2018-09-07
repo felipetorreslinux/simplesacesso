@@ -84,6 +84,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
 
     ImageView item_person_perfil;
     ImageView item_my_location;
+    ImageView image_local_profile;
 
     TextView location_info;
 
@@ -159,6 +160,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
 
     private void imageProfile() {
         item_person_perfil = findViewById(R.id.item_person_perfil);
+        image_local_profile = findViewById(R.id.image_local_profile);
         item_person_perfil.setOnClickListener(this);
         if(sharedPreferences.getString("image", "").isEmpty()){
             Picasso.get()
@@ -173,6 +175,11 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                     .resize(200,200)
                     .into(item_person_perfil);
         }
+        Picasso.get()
+                .load(R.drawable.no_image)
+                .transform(new CropCircleTransformation())
+                .resize(50,50)
+                .into(image_local_profile);
     }
 
     @SuppressLint("MissingPermission")
@@ -216,12 +223,12 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 @Override
                 public void onMapReady(final GoogleMap googleMap) {
                     location_info.setText("Carregando sua\nlocalização");
-                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style));
-                    final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style_dark));
                     googleMap.getUiSettings().setMapToolbarEnabled(false);
+                    googleMap.getUiSettings().setCompassEnabled(false);
                     googleMap.setBuildingsEnabled(true);
                     googleMap.setIndoorEnabled(true);
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
                     googleMap.animateCamera(cameraUpdate);
 
                     googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
@@ -234,7 +241,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                     googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                         @Override
                         public void onMapLoaded() {
-                            location_info.setText(serviceLocation.getAddress(latLng));
+                            location_info.setText(serviceLocation.getAddress(new LatLng(location.getLatitude(), location.getLongitude())));
                             editor.putString("lat", String.valueOf(location.getLatitude()));
                             editor.putString("lng", String.valueOf(location.getLongitude()));
                             editor.commit();
