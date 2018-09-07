@@ -5,21 +5,21 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Adapter;
+import android.view.ViewStub;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.simples.acesso.API.API;
-import com.simples.acesso.Adapters.Adapter_Hospitais;
+import com.simples.acesso.Adapters.Adapter_Places;
 import com.simples.acesso.Adapters.Adapter_SearchPlace;
-import com.simples.acesso.Models.Hospitais_Model;
+import com.simples.acesso.Models.Places_Model;
 import com.simples.acesso.Models.SearchPlace_Model;
+import com.simples.acesso.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,28 +34,23 @@ public class Service_Location {
 
     Activity activity;
     SharedPreferences.Editor editor;
+    ViewStub loading_places;
 
     public Service_Location(Activity activity){
         this.activity = activity;
         this.editor = activity.getSharedPreferences("attendance", Context.MODE_PRIVATE).edit();
+        this.loading_places = activity.findViewById(R.id.loading_places);
     }
 
-    public String getAddress(double lat, double lng) {
+    public String getAddress(LatLng latLng) {
         Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
         try {
-            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
             Address obj = addresses.get(0);
-
-            String local = obj.getAddressLine(0);
-            String[] dados = local.split(",");
+            String[] dados = obj.getAddressLine(0).split(",");
             String[] dados2 = dados[1].split("-");
-
-            local = dados[0]+", "+dados2[0]+"\n"+dados2[1]+" - "+dados[2];
-
-            return local;
+            return dados[0] + ", " + dados2[0] + "\n" + dados2[1] + " - " + dados[2];
         } catch (IOException e) {
-            return null;
-        } catch (NullPointerException e){
             return null;
         }
     }
@@ -104,8 +99,9 @@ public class Service_Location {
             });
     }
 
-    public void getHospital (final double lat, double lng, final RecyclerView recyclerView){
-        AndroidNetworking.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+lng+"&radius=5000&type=hospital&key=AIzaSyAfR29suxxy_ZWoiwkfpFNb2qGTCwWMIiE")
+    public void getPlaces (final double lat, double lng, final String type, final RecyclerView recyclerView){
+        loading_places.setVisibility(View.VISIBLE);
+        AndroidNetworking.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+lng+"&radius=15000&type="+type+"&key=AIzaSyAfR29suxxy_ZWoiwkfpFNb2qGTCwWMIiE")
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
@@ -115,20 +111,21 @@ public class Service_Location {
                             switch (status){
                                 case "OK":
                                     JSONArray array = response.getJSONArray("results");
-                                    List<Hospitais_Model> list = new ArrayList<Hospitais_Model>();
-                                    list.clear();
                                     if(array.length() > 0){
+                                        List<Places_Model> list = new ArrayList<Places_Model>();
+                                        list.clear();
                                         for(int i = 0; i < array.length(); i++){
                                             JSONObject jsonObject = array.getJSONObject(i);
-                                            String name = jsonObject.getString("name");
-                                            Hospitais_Model hospitais_model = new Hospitais_Model(name);
-                                            list.add(hospitais_model);
+                                            Places_Model places_model = new Places_Model(jsonObject);
+                                            list.add(places_model);
                                         }
-                                        Adapter_Hospitais adapter_hospitais = new Adapter_Hospitais(activity, list);
-                                        recyclerView.setAdapter(adapter_hospitais);
+                                        Adapter_Places adapter_places = new Adapter_Places(activity, list);
+                                        recyclerView.setAdapter(adapter_places);
                                         recyclerView.setVisibility(View.VISIBLE);
+                                        loading_places.setVisibility(View.GONE);
                                     }else{
                                         recyclerView.setVisibility(View.GONE);
+                                        loading_places.setVisibility(View.VISIBLE);
                                     }
                                     break;
                             }

@@ -18,6 +18,8 @@
         android:roundIcon="@drawable/ic_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
         android:name=".FireBase.FireCore">
 
         <meta-data
@@ -76,7 +78,10 @@
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>
 
-        <activity android:name=".Views.Hospitals"
+        <activity android:name=".Views.Hospitais"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".Views.Delegacias"
             android:screenOrientation="portrait"/>
 
 

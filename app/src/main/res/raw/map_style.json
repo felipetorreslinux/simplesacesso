@@ -11,7 +11,7 @@
     "elementType": "labels.icon",
     "stylers": [
       {
-        "visibility": "on"
+        "visibility": "off"
       }
     ]
   },
@@ -32,6 +32,23 @@
     ]
   },
   {
+    "featureType": "administrative",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
     "featureType": "administrative.land_parcel",
     "elementType": "labels.text.fill",
     "stylers": [
@@ -41,11 +58,36 @@
     ]
   },
   {
+    "featureType": "administrative.neighborhood",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
     "featureType": "poi",
     "elementType": "geometry",
     "stylers": [
       {
         "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "off"
       }
     ]
   },
@@ -86,6 +128,24 @@
     ]
   },
   {
+    "featureType": "road",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
     "featureType": "road.arterial",
     "elementType": "labels.text.fill",
     "stylers": [
@@ -122,6 +182,14 @@
     ]
   },
   {
+    "featureType": "transit",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
     "featureType": "transit.line",
     "elementType": "geometry",
     "stylers": [
@@ -145,6 +213,15 @@
     "stylers": [
       {
         "color": "#c9c9c9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "off"
       }
     ]
   },

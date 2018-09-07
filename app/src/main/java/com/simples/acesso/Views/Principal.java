@@ -34,6 +34,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
@@ -66,6 +67,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +78,6 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 public class Principal extends AppCompatActivity implements View.OnClickListener{
 
     AlertDialog.Builder builder;
-    AlertDialog alertDialog;
     Service_Login serviceLogin;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -159,7 +160,6 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     private void imageProfile() {
         item_person_perfil = findViewById(R.id.item_person_perfil);
         item_person_perfil.setOnClickListener(this);
-
         if(sharedPreferences.getString("image", "").isEmpty()){
             Picasso.get()
                     .load(R.drawable.no_image)
@@ -204,79 +204,46 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                     } else {
                         MapsInitializer.initialize(getApplicationContext());
                         mapView.onResume();
-                        item_my_location.setVisibility(View.GONE);
                     }
                 }
             });
         }
     }
 
-    @SuppressLint("MissingPermission")
     private void mapReady(final Location location){
         try {
             mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(final GoogleMap googleMap) {
                     location_info.setText("Carregando sua\nlocalização");
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style));
+                    final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     googleMap.getUiSettings().setMapToolbarEnabled(false);
                     googleMap.setBuildingsEnabled(true);
                     googleMap.setIndoorEnabled(true);
-                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style));
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
                     googleMap.animateCamera(cameraUpdate);
 
                     googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                         @Override
                         public void onCameraIdle() {
-                            double CameraLat = googleMap.getCameraPosition().target.latitude;
-                            double CameraLong = googleMap.getCameraPosition().target.longitude;
-                            if(serviceLocation.getAddress(CameraLat,CameraLong) != null){
-                                location_info.setText(serviceLocation.getAddress(CameraLat,CameraLong));
-                                item_my_location.setVisibility(View.VISIBLE);
-                            }else{
-                                location_info.setText(R.string.info_not_location);
-                            }
-
-                        }
-                    });
-
-                    googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
-                        @Override
-                        public void onCameraMove() {
-                            location_info.setText("Carregando\nlocalização");
+                            item_my_location.setVisibility(View.VISIBLE);
                         }
                     });
 
                     googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                         @Override
                         public void onMapLoaded() {
-                            location_info.setText(serviceLocation.getAddress(location.getLatitude(), location.getLongitude()));
-                            item_my_location.setVisibility(View.GONE);
+                            location_info.setText(serviceLocation.getAddress(latLng));
                             editor.putString("lat", String.valueOf(location.getLatitude()));
                             editor.putString("lng", String.valueOf(location.getLongitude()));
                             editor.commit();
                         }
                     });
-
                     mapView.onResume();
-//                    watchLocation();
                 }
             });
-        }catch (NullPointerException e) {
-
-        }
-    }
-
-    private void watchLocation() {
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
-                googleMap.animateCamera(cameraUpdate);
-            }
-        };
+        }catch (NullPointerException e) {}
     }
 
     private void openAttendence(){

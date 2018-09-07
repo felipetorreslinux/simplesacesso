@@ -11,31 +11,50 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <ImageView
-            android:id="@+id/item_my_location"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_above="@+id/bottom_bar_itens_principal"
-            android:layout_margin="16dp"
-            android:background="@drawable/icon_person"
-            android:clickable="true"
-            android:elevation="4dp"
-            android:padding="12.5dp"
-            android:src="@drawable/ic_my_location"
-            android:layout_marginRight="13dp"
-            android:layout_alignParentRight="true" />
 
-        <ImageView
-            android:id="@+id/item_person_perfil"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="36dp"
-            android:background="@drawable/icon_person"
-            android:clickable="true"
-            android:elevation="4dp"
-            android:padding="2.5dp"
-            android:src="@drawable/ic_person" />
+
+        <LinearLayout
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/item_person_perfil"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/icon_person"
+                    android:clickable="true"
+                    android:padding="2.5dp"
+                    android:src="@drawable/ic_person" />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/location_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="45dp"
+                    android:gravity="center"
+                    android:background="@drawable/info_map_principal"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_gravity="fill|start"
+                    android:maxLines="2"
+                    android:textColor="@color/colorPrimary"/>
+
+                <ImageView
+                    android:id="@+id/item_my_location"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/icon_person"
+                    android:layout_gravity="center"
+                    android:clickable="true"
+                    android:padding="12.5dp"
+                    android:src="@drawable/ic_my_location"/>
+
+        </LinearLayout>
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottom_bar_itens_principal"
@@ -49,24 +68,12 @@
 
         </android.support.design.widget.BottomNavigationView>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:layout_centerInParent="true">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/location_map_icon"
+            android:layout_centerInParent="true"
+            android:tint="@color/colorPrimary"/>
 
-                <TextView
-                    android:id="@+id/location_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="40dp"
-                    android:paddingBottom="10dp"
-                    android:gravity="center"
-                    android:paddingHorizontal="10dp"
-                    android:elevation="3dp"
-                    android:textColor="@color/colorWhite"
-                    android:background="@drawable/bundle_map_user"/>
-
-        </LinearLayout>
 
 </RelativeLayout>

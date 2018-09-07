@@ -4,30 +4,19 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,25 +24,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.simples.acesso.Manifest;
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Perfil;
-import com.simples.acesso.Utils.MaskCPF;
-import com.simples.acesso.Utils.MaskCellPhone;
-import com.simples.acesso.Utils.PreLoads;
-import com.simples.acesso.Utils.ValidEmail;
-import com.simples.acesso.Utils.ValidaCPF;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.UUID;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -77,6 +52,7 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
     String cpf;
 
     LinearLayout item_hospital_profile;
+    LinearLayout item_delegacia_profile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -116,7 +92,9 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
         }
 
         item_hospital_profile = findViewById(R.id.item_hospital_profile);
+        item_delegacia_profile = findViewById(R.id.item_delegacia_profile);
         item_hospital_profile.setOnClickListener(this);
+        item_delegacia_profile.setOnClickListener(this);
     }
 
     private void createToolbar(Toolbar toolbar) {
@@ -146,7 +124,11 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
                 chooseImage();
                 break;
             case R.id.item_hospital_profile:
-                startActivity(new Intent(this, Hospitals.class));
+                startActivity(new Intent(this, Hospitais.class));
+                break;
+
+            case R.id.item_delegacia_profile:
+                startActivity(new Intent(this, Delegacias.class));
                 break;
         }
     }
@@ -203,49 +185,49 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
 
             final StorageReference ref = storageReference.child("images/"+cpf+".jpg");
             ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Snackbar.make(getWindow().getDecorView(),
-                                    "Foto atualizada com sucesso", Snackbar.LENGTH_SHORT).show();
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Snackbar.make(getWindow().getDecorView(),
+                                "Foto atualizada com sucesso", Snackbar.LENGTH_SHORT).show();
 
-                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Picasso.get()
-                                            .load(uri)
-                                            .transform(new CropCircleTransformation())
-                                            .resize(200,200)
-                                            .into(image_profile);
-                                    editor.putString("image", uri.toString());
-                                    editor.commit();
-                                    progressDialog.dismiss();
-                                }
-                            });
+                        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Picasso.get()
+                                        .load(uri)
+                                        .transform(new CropCircleTransformation())
+                                        .resize(200,200)
+                                        .into(image_profile);
+                                editor.putString("image", uri.toString());
+                                editor.commit();
+                                progressDialog.dismiss();
+                            }
+                        });
 
-                            editor.putString("image", ref.getDownloadUrl().toString());
-                            editor.commit();
+                        editor.putString("image", ref.getDownloadUrl().toString());
+                        editor.commit();
 
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Snackbar.make(getWindow().getDecorView(),
-                                    ""+e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                            editor.putString("image", "");
-                            editor.commit();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setProgress((int) progress);
-                        }
-                    });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Snackbar.make(getWindow().getDecorView(),
+                                ""+e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        editor.putString("image", "");
+                        editor.commit();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                .getTotalByteCount());
+                        progressDialog.setProgress((int) progress);
+                    }
+                });
         }
     }
 

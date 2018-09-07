@@ -18,7 +18,7 @@
     <string name="title_requests_services">Solicitações</string>
     <string name="info_not_requests_services">Você ainda não realizou nenhuma solicitção</string>
     <string name="info_ok_save_perfil">Informações salvas com sucesso</string>
-    <string name="info_not_gps">Você precisa habilitar seu GPS</string>
+    <string name="info_not_gps">Habilite seu GPS</string>
     <string name="info_error_code_sms">Código inválido</string>
     <string name="info_login_label">Qual seu número de telefone?</string>
     <string name="info_label2_login">Informe seu número de telefone com o DDD para prosseguir</string>
@@ -47,5 +47,7 @@
     <string name="item_hospital_profile">Hospitais</string>
     <string name="item_delegacia_profile">Delegacias</string>
     <string name="title_hospitals">Hospitais</string>
+    <string name="loading_text_hospitais">Carregando hospitais mais próximos a você</string>
+    <string name="title_delegacias">Delegacias</string>
 
 </resources>

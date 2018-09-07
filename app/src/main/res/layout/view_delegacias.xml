@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_hospitals"
+        android:id="@+id/toolbar_delegacias"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
@@ -14,9 +14,15 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
+    <ViewStub
+        android:id="@+id/loading_delegacias"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout="@layout/loading_places"/>
+
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_hospitals"
+        android:id="@+id/recycler_delegacias"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
