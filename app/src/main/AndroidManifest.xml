@@ -62,6 +62,7 @@
             android:theme="@style/SearchPlace"/>
 
         <activity android:name=".Views.Services_Emergency"
+            android:theme="@style/ServiceEmergency"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".Views.Perfil"
@@ -89,6 +90,10 @@
             android:theme="@style/MinhasInformacoes"
             android:screenOrientation="portrait"/>
 
+        <!--Atendimento-->
+
+        <activity android:name=".Atendimento.Inicio_Atendimento"
+            android:screenOrientation="portrait"/>
 
     </application>
 

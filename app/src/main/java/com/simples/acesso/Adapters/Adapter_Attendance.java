@@ -1,6 +1,8 @@
 package com.simples.acesso.Adapters;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,19 +13,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonIOException;
 import com.simples.acesso.Models.Attendance_Model;
 import com.simples.acesso.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Adapter_Attendance extends RecyclerView.Adapter<Adapter_Attendance.Attendance> {
 
     Activity activity;
     List<Attendance_Model> list;
+    public static List<String> lista_sintomas = new ArrayList<String>();
 
-    public Adapter_Attendance(Activity activity, List<Attendance_Model> list){
+    public Adapter_Attendance(Activity activity, List<Attendance_Model> list) throws JSONException{
         this.activity = activity;
         this.list = list;
+        lista_sintomas.clear();
+        lista_sintomas.add("Não sei informar");
     }
 
     @NonNull
@@ -49,9 +60,11 @@ public class Adapter_Attendance extends RecyclerView.Adapter<Adapter_Attendance.
             @Override
             public void onClick(View v) {
                 if(attendanceModel.isChecked()){
+                    removeSitoma(attendanceModel);
                     attendance.image_check.setVisibility(View.GONE);
                     attendanceModel.setChecked(false);
                 }else{
+                    addSintoma(attendanceModel);
                     attendance.image_check.setVisibility(View.VISIBLE);
                     attendanceModel.setChecked(true);
                 }
@@ -80,4 +93,17 @@ public class Adapter_Attendance extends RecyclerView.Adapter<Adapter_Attendance.
             description = itemView.findViewById(R.id.description);
         }
     }
+
+    private void removeSitoma(Attendance_Model attendance_model){
+        if(lista_sintomas.contains(attendance_model.getDescription())){
+            lista_sintomas.remove(attendance_model.getDescription().trim());
+        }
+    }
+
+    private void addSintoma(Attendance_Model attendance_model){
+        if(!lista_sintomas.contains(attendance_model.getDescription())){
+            lista_sintomas.add(attendance_model.getDescription().trim());
+        }
+    }
+
 }

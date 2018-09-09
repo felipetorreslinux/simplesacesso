@@ -27,9 +27,9 @@
     <string name="label_fireman_tab">BOMBEIROS</string>
     <string name="label_perfil_tab">Perfil</string>
     <string name="info_attendence">Qual sua emergência?</string>
-    <string name="send_police">POLÍCIA</string>
-    <string name="send_samu">SAMU</string>
-    <string name="send_fireman">BOMBEIROS</string>
+    <string name="send_police">Polícia</string>
+    <string name="send_samu">Samu</string>
+    <string name="send_fireman">Bombeiros</string>
     <string name="info_label_local_user">Você está em</string>
     <string name="label_edit_local_user">Alterar</string>
     <string name="info_service_emergency">Qual tipo de sua emergência?</string>
@@ -50,5 +50,6 @@
     <string name="loading_text_hospitais">Carregando hospitais mais próximos a você</string>
     <string name="title_delegacias">Delegacias</string>
     <string name="title_minhas_informacoes">Informações</string>
+    <string name="title_inicio_atendimento">Atendimento</string>
 
 </resources>

@@ -195,34 +195,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/item_config_profile"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="1"
-                    android:padding="16dp"
-                    android:clickable="true"
-                    android:background="@drawable/ripple_white">
-
-                    <TextView
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorPrimary"
-                        android:fontFamily="@font/roboto"
-                        android:textSize="16dp"
-                        android:layout_gravity="center"
-                        android:text="@string/item_config_profile"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_right"
-                        android:layout_gravity="center"/>
-
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/item_termos_profile"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"

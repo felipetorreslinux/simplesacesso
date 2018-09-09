@@ -91,10 +91,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     BottomNavigationView bottom_bar_itens_principal;
 
     MapView mapView;
-    Marker youPerson;
-    GoogleMap googleMap;
     LocationManager locationManager;
-    LocationListener locationListener;
     FusedLocationProviderClient mFusedLocationClient;
 
     Service_Location serviceLocation;

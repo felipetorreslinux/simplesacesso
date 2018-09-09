@@ -35,6 +35,12 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="ServiceEmergency" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor" tools:ignore="NewApi">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
     <style name="SearchPlace" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:statusBarColor" tools:ignore="NewApi">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>

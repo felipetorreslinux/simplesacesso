@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -16,13 +17,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.simples.acesso.Adapters.Adapter_Attendance;
 import com.simples.acesso.Models.Attendance_Model;
 import com.simples.acesso.R;
+import com.simples.acesso.Services.Service_Attendance;
 import com.simples.acesso.Services.Service_Location;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,18 +44,26 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class Services_Emergency extends AppCompatActivity implements View.OnClickListener {
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+
+public class Services_Emergency extends AppCompatActivity implements View.OnClickListener{
 
     SharedPreferences servicos;
-    List<Attendance_Model> list = new ArrayList<Attendance_Model>();
+    SharedPreferences sharedPreferences;
+
     int TYPE_SERVICE;
     String NAME_SERVICE;
     String LOCAL_USER;
 
     Toolbar toolbar;
-    TextView local_user_service;
-    TextView edit_local_service;
 
+    TextView info_local_service;
+    ImageView image_edit_local;
+
+    ImageView image_local_profile;
+    MapView map_service;
+
+    List<Attendance_Model> list = new ArrayList<Attendance_Model>();
     RecyclerView list_services;
 
     Button button_service_emergency;
@@ -55,22 +74,15 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.services_emergency);
 
         servicos = getSharedPreferences("attendance", MODE_PRIVATE);
-
-//        new Service_Location(this).getPlaceAdress("Recife");
+        sharedPreferences = getSharedPreferences("profile", MODE_PRIVATE);
 
         createToolbar(toolbar);
+        mapService(savedInstanceState);
 
         list_services = findViewById(R.id.list_services);
         list_services.setLayoutManager(new LinearLayoutManager(this));
         list_services.setHasFixedSize(false);
         list_services.setNestedScrollingEnabled(false);
-
-        list.clear();
-        Attendance_Model not_info = new Attendance_Model(0,0, "NÃO SEI INFORMAR", true);
-        list.add(not_info);
-
-        edit_local_service = findViewById(R.id.edit_local_service);
-        edit_local_service.setOnClickListener(this);
 
         listServices();
 
@@ -79,12 +91,51 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void mapService(Bundle savedInstanceState){
+        LOCAL_USER = getIntent().getExtras().getString("local_user");
+        info_local_service = findViewById(R.id.info_local_service);
+        info_local_service.setText(LOCAL_USER);
+        image_edit_local = findViewById(R.id.image_edit_local);
+        image_edit_local.setOnClickListener(this);
+
+        image_local_profile = findViewById(R.id.image_local_profile);
+        map_service = findViewById(R.id.map_service);
+        map_service.onCreate(savedInstanceState);
+        map_service.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                String lat = sharedPreferences.getString("lat", "");
+                String lng = sharedPreferences.getString("lng", "");
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
+                googleMap.getUiSettings().setAllGesturesEnabled(false);
+                googleMap.getUiSettings().setCompassEnabled(false);
+                googleMap.getUiSettings().setIndoorLevelPickerEnabled(false);
+                googleMap.setBuildingsEnabled(true);
+                googleMap.setIndoorEnabled(true);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(lat), Double.parseDouble(lng)), 17);
+                googleMap.moveCamera(cameraUpdate);
+                if(sharedPreferences.getString("image", "").isEmpty()){
+                    Picasso.get()
+                            .load(R.drawable.no_image)
+                            .transform(new CropCircleTransformation())
+                            .resize(200,200)
+                            .into(image_local_profile);
+                }else{
+                    Picasso.get()
+                            .load(Uri.parse(sharedPreferences.getString("image", "")))
+                            .transform(new CropCircleTransformation())
+                            .resize(200,200)
+                            .into(image_local_profile);
+                }
+                map_service.onResume();
+            }
+        });
     }
 
     private void listServices() {
+        list.clear();
+        Attendance_Model not_info = new Attendance_Model(0,0, "NÃO SEI INFORMAR", true);
+        list.add(not_info);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -129,23 +180,18 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
 
         TYPE_SERVICE = getIntent().getExtras().getInt("type_service");
-        LOCAL_USER = getIntent().getExtras().getString("local_user");
-
-        local_user_service = findViewById(R.id.local_user_service);
-        local_user_service.setText(LOCAL_USER);
-
         switch (TYPE_SERVICE){
             case 1:
                 getSupportActionBar().setTitle(R.string.send_police);
-                NAME_SERVICE = "POLÍCIA";
+                NAME_SERVICE = "Polícia";
                 break;
             case 2:
                 getSupportActionBar().setTitle(R.string.send_samu);
-                NAME_SERVICE = "SAMU";
+                NAME_SERVICE = "Samu";
                 break;
             case 3:
                 getSupportActionBar().setTitle(R.string.send_fireman);
-                NAME_SERVICE = "BOMBEIROS";
+                NAME_SERVICE = "Bombeiros";
                 break;
         }
     }
@@ -160,22 +206,33 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
         return true;
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.edit_local_service:
-                startActivityForResult(new Intent(this, Search_Place.class), 1000);
-                break;
 
             case R.id.button_service_emergency:
-                Intent intent = new Intent(this, Loading_Service.class);
-                intent.putExtra("service_send", "Chamando\n"+NAME_SERVICE);
-                startActivity(intent);
+                try {
+                    registerAttendance();
+                } catch (JSONException e) {}
                 break;
 
         }
+    }
+
+    private void registerAttendance() throws JSONException{
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name_service", NAME_SERVICE);
+        jsonObject.put("local_service", LOCAL_USER);
+        jsonObject.put("latitude", sharedPreferences.getString("lat", null));
+        jsonObject.put("longitude", sharedPreferences.getString("lng", null));
+
+        new Service_Attendance(this).register(jsonObject);
     }
 
     @Override
@@ -190,7 +247,7 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
         switch (requestCode){
             case 1000:
                 if(resultCode == Activity.RESULT_OK){
-                    local_user_service.setText(data.getExtras().getString("local_user"));
+
                 }else{
                     createToolbar(toolbar);
                     listServices();
