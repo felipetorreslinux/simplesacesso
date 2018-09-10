@@ -2,6 +2,7 @@ package com.simples.acesso.Views;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VerificationSMS extends AppCompatActivity implements View.OnClickListener {
 
+    SharedPreferences.Editor editor;
     AlertDialog.Builder builder;
     Toolbar toolbar;
     String cellphone;
@@ -46,6 +48,7 @@ public class VerificationSMS extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.verification_sms);
+        editor = getSharedPreferences("profile", MODE_PRIVATE).edit();
         serviceLogin = new Service_Login(this);
         builder = new AlertDialog.Builder(this);
         cellphone = getIntent().getExtras().getString("cellphone");
@@ -128,26 +131,22 @@ public class VerificationSMS extends AppCompatActivity implements View.OnClickLi
                 String code = code_sms.getText().toString().trim();
                 if(code.isEmpty()){
                     layout_code_sms.setErrorEnabled(true);
-                    layout_code_sms.setError("informe o código");
+                    layout_code_sms.setError("Informe o código");
                     code_sms.requestFocus();
-                }else if(code_sms.getText().length() < 6) {
+                }else if(code_sms.getText().length() < 6 && code_sms.getText().toString().equals("111111")) {
                     layout_code_sms.setErrorEnabled(true);
                     layout_code_sms.setError("Código inválido");
                     code_sms.requestFocus();
                 }else{
                     layout_code_sms.setErrorEnabled(false);
                     layout_code_sms.setError(null);
-                    LoadingView.open(this, "Validando");
-                    new CountDownTimer(4000, 1000) {
-                        public void onTick(long millisUntilFinished) {}
-                        public void onFinish() {
-                            Intent intent = new Intent(VerificationSMS.this, Principal.class);
-                            intent.putExtra("cellphone", cellphone);
-                            startActivity(intent);
-                            finishAffinity();
-                            LoadingView.close();
-                        }
-                    }.start();
+                    editor.putInt("id", getIntent().getExtras().getInt("id"));
+                    editor.putString("cellphone", cellphone);
+                    editor.commit();
+                    Intent intent = new Intent(VerificationSMS.this, Principal.class);
+                    intent.putExtra("cellphone", cellphone);
+                    startActivity(intent);
+                    finishAffinity();
                 }
                 break;
         }

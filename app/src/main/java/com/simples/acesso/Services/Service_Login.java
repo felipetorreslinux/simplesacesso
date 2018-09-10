@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.CountDownTimer;
+import android.support.design.widget.Snackbar;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
@@ -36,15 +37,35 @@ public class Service_Login {
 
     public void check_cellphone (final String cellphone){
         LoadingView.open(activity, "Verificando");
-        new CountDownTimer(2000, 1000) {
-            public void onTick(long millisUntilFinished) {}
-            public void onFinish() {
-                Intent intent = new Intent(activity, VerificationSMS.class);
-                intent.putExtra("cellphone", cellphone);
-                activity.startActivity(intent);
-                LoadingView.close();
-            }
-        }.start();
+        AndroidNetworking.post(API.URL_DEV+"Modules/CheckCellPhone.php")
+            .addBodyParameter("cellphone", cellphone)
+            .build()
+            .getAsJSONObject(new JSONObjectRequestListener() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try{
+                        int code = response.getInt("code");
+                        switch (code){
+                            case 0:
+                                Intent intent = new Intent(activity, VerificationSMS.class);
+                                intent.putExtra("cellphone", cellphone);
+                                intent.putExtra("id", response.getInt("id"));
+                                activity.startActivity(intent);
+                                LoadingView.close();
+                                break;
+                            default:
+                                LoadingView.close();
+
+                                break;
+                        }
+                    }catch (JSONException e){}
+                }
+
+                @Override
+                public void onError(ANError anError) {
+
+                }
+            });
     }
 
     public void login (final String cellphone, final String password){
@@ -67,7 +88,6 @@ public class Service_Login {
                             String email = response.getJSONObject("profile").getString("email");
                             int created_at = response.getJSONObject("profile").getInt("created_at");
                             String token = response.getJSONObject("profile").getString("token");
-                            System.out.println(token);
                             editor.putInt("id", id);
                             editor.putString("document", document);
                             editor.putString("name", name);

@@ -55,7 +55,7 @@ public class Service_Location {
         }
     }
 
-    public void getPlaceAdress (String text, final List<SearchPlace_Model> list, final RecyclerView recyclerView, final ProgressBar progress_search){
+    public void getPlaceAdress (String text, final RecyclerView recyclerView, final ProgressBar progressBar){
         AndroidNetworking.get("https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="+text+"&inputtype=textquery&fields=formatted_address,name,geometry&key=AIzaSyAfR29suxxy_ZWoiwkfpFNb2qGTCwWMIiE")
             .build()
             .getAsJSONObject(new JSONObjectRequestListener() {
@@ -67,6 +67,7 @@ public class Service_Location {
                             case "OK":
                                 JSONArray array = response.getJSONArray("candidates");
                                 if(array.length() > 0){
+                                    List<SearchPlace_Model> list = new ArrayList<SearchPlace_Model>();
                                     list.clear();
                                     for(int i = 0; i < array.length(); i++){
                                         JSONObject jsonObject = array.getJSONObject(i);
@@ -80,9 +81,9 @@ public class Service_Location {
                                     }
                                     Adapter_SearchPlace adapterSearchPlace = new Adapter_SearchPlace(activity, list);
                                     recyclerView.setAdapter(adapterSearchPlace);
-                                    progress_search.setVisibility(View.GONE);
+                                    progressBar.setVisibility(View.GONE);
                                 }else{
-                                    progress_search.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(View.VISIBLE);
                                 }
                                 break;
                             default:
@@ -175,5 +176,15 @@ public class Service_Location {
                     API.ErrorSever(activity, anError.getErrorCode());
                 }
             });
+    }
+
+    public String getCity(LatLng latLng){
+        Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            return addresses.get(0).getLocality();
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

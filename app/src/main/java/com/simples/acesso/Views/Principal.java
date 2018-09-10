@@ -1,13 +1,12 @@
 package com.simples.acesso.Views;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -16,68 +15,43 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.simples.acesso.Adapters.Adapter_Attendance;
-import com.simples.acesso.Adapters.Adapter_InfoWindow;
-import com.simples.acesso.Models.Attendance_Model;
 import com.simples.acesso.R;
+import com.simples.acesso.Services.Service_Attendance;
 import com.simples.acesso.Services.Service_Location;
 import com.simples.acesso.Services.Service_Login;
-import com.simples.acesso.Utils.LoadingView;
-import com.simples.acesso.Utils.PreLoads;
 import com.simples.acesso.Utils.ValidGPS;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class Principal extends AppCompatActivity implements View.OnClickListener{
 
-    AlertDialog.Builder builder;
+    static AlertDialog.Builder builder;
+    static AlertDialog alertDialog;
     Service_Login serviceLogin;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -86,10 +60,13 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     ImageView item_my_location;
     ImageView image_local_profile;
 
-    TextView location_info;
+    static TextView location_info;
+    static int alive_location;
+    Snackbar snackbar;
 
     BottomNavigationView bottom_bar_itens_principal;
 
+    static GoogleMap mGoogleMap;
     MapView mapView;
     LocationManager locationManager;
     FusedLocationProviderClient mFusedLocationClient;
@@ -98,11 +75,14 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     double Latitude;
     double Longitude;
 
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.principal);
 
+        progressDialog = new ProgressDialog(this);
         sharedPreferences = getSharedPreferences("profile", MODE_PRIVATE);
         editor = getSharedPreferences("profile", MODE_PRIVATE).edit();
         serviceLogin = new Service_Login(this);
@@ -113,18 +93,25 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         item_my_location = findViewById(R.id.item_my_location);
-        item_my_location.setVisibility(View.GONE);
         item_my_location.setOnClickListener(this);
 
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
         location_info = findViewById(R.id.location_info);
+        location_info.setOnClickListener(this);
+
+        snackbar = Snackbar.make(getWindow().getDecorView(),
+                "Procurando sua localização\nAguarde...",
+                Snackbar.LENGTH_INDEFINITE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
         validDocument();
     }
 
@@ -146,8 +133,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 builder.setNegativeButton(null, null);
                 builder.create().show();
             } else {
-                imageProfile();
-                openAttendence();
+                new Service_Attendance(this).check(progressDialog);
                 localeProfile();
             }
         }
@@ -203,9 +189,6 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                             MapsInitializer.initialize(getApplicationContext());
                             mapReady(location);
                         } catch (Exception e) {}
-                    } else {
-                        MapsInitializer.initialize(getApplicationContext());
-                        mapView.onResume();
                     }
                 }
             });
@@ -217,22 +200,15 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
             mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(final GoogleMap googleMap) {
-                    location_info.setText("Carregando sua\nlocalização");
-//                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(Principal.this, R.raw.map_style_dark));
+                    mGoogleMap = googleMap;
+                    snackbar.show();
+                    alive_location = 0;
                     googleMap.getUiSettings().setMapToolbarEnabled(false);
                     googleMap.getUiSettings().setCompassEnabled(false);
                     googleMap.setBuildingsEnabled(true);
                     googleMap.setIndoorEnabled(true);
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15);
                     googleMap.animateCamera(cameraUpdate);
-
-                    googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-                        @Override
-                        public void onCameraIdle() {
-                            item_my_location.setVisibility(View.VISIBLE);
-                        }
-                    });
-
                     googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                         @Override
                         public void onMapLoaded() {
@@ -240,9 +216,13 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                             editor.putString("lat", String.valueOf(location.getLatitude()));
                             editor.putString("lng", String.valueOf(location.getLongitude()));
                             editor.commit();
+                            alive_location = 1;
+                            snackbar.dismiss();
                         }
                     });
                     mapView.onResume();
+                    imageProfile();
+                    openAttendence();
                 }
             });
         }catch (NullPointerException e) {}
@@ -256,28 +236,28 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                 switch (menuItem.getItemId()){
                     case R.id.item_police:
 
-                            Intent police = new Intent(Principal.this, Services_Emergency.class);
-                            police.putExtra("type_service", 1);
-                            police.putExtra("local_user", location_info.getText().toString().trim());
-                            startActivityForResult(police,1010);
+                        Intent police = new Intent(Principal.this, Services_Emergency.class);
+                        police.putExtra("type_service", 1);
+                        police.putExtra("local_user", location_info.getText().toString().trim());
+                        startActivityForResult(police,1010);
 
                         break;
 
                     case R.id.item_ambulance:
 
-                            Intent ambulance = new Intent(Principal.this, Services_Emergency.class);
-                            ambulance.putExtra("type_service", 2);
-                            ambulance.putExtra("local_user", location_info.getText().toString().trim());
-                            startActivityForResult(ambulance,1010);
+                        Intent ambulance = new Intent(Principal.this, Services_Emergency.class);
+                        ambulance.putExtra("type_service", 2);
+                        ambulance.putExtra("local_user", location_info.getText().toString().trim());
+                        startActivityForResult(ambulance,1010);
 
                         break;
 
                     case R.id.item_fireman:
 
-                            Intent fireman = new Intent(Principal.this, Services_Emergency.class);
-                            fireman.putExtra("type_service", 3);
-                            fireman.putExtra("local_user", location_info.getText().toString().trim());
-                            startActivityForResult(fireman, 1010);
+                        Intent fireman = new Intent(Principal.this, Services_Emergency.class);
+                        fireman.putExtra("type_service", 3);
+                        fireman.putExtra("local_user", location_info.getText().toString().trim());
+                        startActivityForResult(fireman, 1010);
 
                         break;
                 }
@@ -289,14 +269,68 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-
             case R.id.item_person_perfil:
                 startActivityForResult(new Intent(this, Perfil.class), 2002);
+                break;
+            case R.id.location_info:
+                builder = new AlertDialog.Builder(this, R.style.CustomDialog);
+                View view = getLayoutInflater().inflate(R.layout.dialog_search_place, null);
+                builder.setView(view);
+                alertDialog = builder.create();
+                alertDialog.show();
+
+                final ProgressBar progressBar = view.findViewById(R.id.progress_search);
+                progressBar.setVisibility(View.GONE);
+
+                final EditText editText = view.findViewById(R.id.text_search);
+
+                final RecyclerView recyclerView = view.findViewById(R.id.recycler_search);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setNestedScrollingEnabled(false);
+
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if(s.length() > 3){
+                            progressBar.setVisibility(View.VISIBLE);
+                            new Service_Location(Principal.this)
+                                    .getPlaceAdress(editText.getText().toString().trim(), recyclerView, progressBar);
+                        }else{
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {}
+                });
+
                 break;
             case R.id.item_my_location:
                 localeProfile();
                 break;
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     @Override
@@ -310,10 +344,13 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
             case 2002:
                 localeProfile();
                 break;
-
-            case 1010:
-
-                break;
         }
+    }
+
+    public static void localNovo(String local, double lat, double lng){
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 15);
+        mGoogleMap.animateCamera(cameraUpdate);
+        location_info.setText(local);
+        alertDialog.dismiss();
     }
 }

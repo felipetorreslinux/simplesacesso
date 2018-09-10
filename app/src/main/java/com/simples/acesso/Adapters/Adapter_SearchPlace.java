@@ -1,7 +1,9 @@
 package com.simples.acesso.Adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,9 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.simples.acesso.Models.SearchPlace_Model;
 import com.simples.acesso.R;
 import com.simples.acesso.Services.Service_Location;
+import com.simples.acesso.Views.Principal;
 
 import java.util.List;
 
@@ -20,10 +24,12 @@ public class Adapter_SearchPlace extends RecyclerView.Adapter<Adapter_SearchPlac
 
     Activity activity;
     List<SearchPlace_Model> list;
+    SharedPreferences.Editor editor;
 
     public Adapter_SearchPlace(Activity activity, List<SearchPlace_Model> list){
         this.activity = activity;
         this.list = list;
+        this.editor = activity.getSharedPreferences("profile", Context.MODE_PRIVATE).edit();
 
     }
 
@@ -42,10 +48,13 @@ public class Adapter_SearchPlace extends RecyclerView.Adapter<Adapter_SearchPlac
         searchPlace.text_name_address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = activity.getIntent();
-                intent.putExtra("local_user", searchPlaceModel.getAddress());
-                activity.setResult(Activity.RESULT_OK, intent);
-                activity.finish();
+                Principal.localNovo(
+                        new Service_Location(activity).getAddress(new LatLng(searchPlaceModel.getLat(), searchPlaceModel.getLng())),
+                        searchPlaceModel.getLat(),
+                        searchPlaceModel.getLng());
+                editor.putString("lat", String.valueOf(searchPlaceModel.getLat()));
+                editor.putString("lng", String.valueOf(searchPlaceModel.getLng()));
+                editor.commit();
             }
         });
 

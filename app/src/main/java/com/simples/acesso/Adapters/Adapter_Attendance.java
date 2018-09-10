@@ -34,7 +34,6 @@ public class Adapter_Attendance extends RecyclerView.Adapter<Adapter_Attendance.
         this.activity = activity;
         this.list = list;
         lista_sintomas.clear();
-        lista_sintomas.add("Não sei informar");
     }
 
     @NonNull
@@ -95,14 +94,14 @@ public class Adapter_Attendance extends RecyclerView.Adapter<Adapter_Attendance.
     }
 
     private void removeSitoma(Attendance_Model attendance_model){
-        if(lista_sintomas.contains(attendance_model.getDescription())){
-            lista_sintomas.remove(attendance_model.getDescription().trim());
+        if(lista_sintomas.contains(String.valueOf(attendance_model.getId()))){
+            lista_sintomas.remove(String.valueOf(attendance_model.getId()));
         }
     }
 
     private void addSintoma(Attendance_Model attendance_model){
-        if(!lista_sintomas.contains(attendance_model.getDescription())){
-            lista_sintomas.add(attendance_model.getDescription().trim());
+        if(!lista_sintomas.contains(String.valueOf(attendance_model.getId()))){
+            lista_sintomas.add(String.valueOf(attendance_model.getId()));
         }
     }
 

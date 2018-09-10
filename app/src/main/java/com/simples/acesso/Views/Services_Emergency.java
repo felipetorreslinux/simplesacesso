@@ -58,7 +58,6 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
     Toolbar toolbar;
 
     TextView info_local_service;
-    ImageView image_edit_local;
 
     ImageView image_local_profile;
     MapView map_service;
@@ -95,9 +94,6 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
         LOCAL_USER = getIntent().getExtras().getString("local_user");
         info_local_service = findViewById(R.id.info_local_service);
         info_local_service.setText(LOCAL_USER);
-        image_edit_local = findViewById(R.id.image_edit_local);
-        image_edit_local.setOnClickListener(this);
-
         image_local_profile = findViewById(R.id.image_local_profile);
         map_service = findViewById(R.id.map_service);
         map_service.onCreate(savedInstanceState);
@@ -134,8 +130,6 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
 
     private void listServices() {
         list.clear();
-        Attendance_Model not_info = new Attendance_Model(0,0, "NÃO SEI INFORMAR", true);
-        list.add(not_info);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -169,7 +163,6 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
         }, 30);
     }
 
-    @SuppressLint("NewApi")
     private void createToolbar(Toolbar toolbar) {
 
         Drawable backIconActionBar = getResources().getDrawable(R.drawable.ic_back_white);
@@ -225,13 +218,10 @@ public class Services_Emergency extends AppCompatActivity implements View.OnClic
     }
 
     private void registerAttendance() throws JSONException{
-
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type_service", TYPE_SERVICE);
         jsonObject.put("name_service", NAME_SERVICE);
         jsonObject.put("local_service", LOCAL_USER);
-        jsonObject.put("latitude", sharedPreferences.getString("lat", null));
-        jsonObject.put("longitude", sharedPreferences.getString("lng", null));
-
         new Service_Attendance(this).register(jsonObject);
     }
 

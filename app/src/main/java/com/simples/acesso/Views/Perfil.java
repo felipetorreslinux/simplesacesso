@@ -1,7 +1,9 @@
 package com.simples.acesso.Views;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -54,6 +56,7 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
     LinearLayout item_edit_profile;
     LinearLayout item_hospital_profile;
     LinearLayout item_delegacia_profile;
+    LinearLayout item_sair_profile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,9 +98,11 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
         item_edit_profile = findViewById(R.id.item_edit_profile);
         item_hospital_profile = findViewById(R.id.item_hospital_profile);
         item_delegacia_profile = findViewById(R.id.item_delegacia_profile);
+        item_sair_profile = findViewById(R.id.item_sair_profile);
         item_edit_profile.setOnClickListener(this);
         item_hospital_profile.setOnClickListener(this);
         item_delegacia_profile.setOnClickListener(this);
+        item_sair_profile.setOnClickListener(this);
     }
 
     private void createToolbar(Toolbar toolbar) {
@@ -136,6 +141,23 @@ public class Perfil extends AppCompatActivity implements View.OnClickListener {
 
             case R.id.item_edit_profile:
                 startActivity(new Intent(this, Minhas_Informacoes.class));
+                break;
+
+            case R.id.item_sair_profile:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage("Deseja realmente sair?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Sair", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        editor.putInt("id", 0);
+                        editor.commit();
+                        finishAffinity();
+                    }
+                });
+                builder.setNegativeButton("Não", null);
+                builder.create().show();
                 break;
         }
     }
